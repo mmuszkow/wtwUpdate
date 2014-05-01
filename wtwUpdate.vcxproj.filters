@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Header Files\JsonObjs">
+      <UniqueIdentifier>{1eaa9bf3-140c-4105-943e-7fc2498cb50c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{8b675197-d445-46b9-9743-27c94b53aa4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Updater">
+      <UniqueIdentifier>{0578eb6c-c0e1-41e2-9d74-3d5e6695ea92}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdinc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stdinc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JsonObjs\Rev.h">
+      <Filter>Header Files\JsonObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JsonObjs\File.h">
+      <Filter>Header Files\JsonObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JsonObjs\Obj.h">
+      <Filter>Header Files\JsonObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JsonObjs\Addon.h">
+      <Filter>Header Files\JsonObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JsonObjs\Section.h">
+      <Filter>Header Files\JsonObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\Control.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\HtmlEdit.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\AddonsTree.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\SearchBar.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\UpdateWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\FilePath.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\CheckThread.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\InstallThread.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\TimerThread.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\ZipFile.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\wtwUpdate.def">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\wtwUpdate.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,6 @@
+LIBRARY	"wtwUpdate"
+
+EXPORTS
+	queryPlugInfo
+	pluginLoad
+	pluginUnload
