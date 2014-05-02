@@ -18,12 +18,11 @@ namespace wtwUpdate {
 			}
 		public:
 			ZipFile(const std::wstring& fn) {
-				char* utf8path = wtw::CConv::wtou(fn.c_str());
-				_file = unzOpen(utf8path); // TODO: unzOpen is utf8?
-				wtw::CConv::release(utf8path);
+				_file = unzOpen(wtou(fn).c_str()); // TODO: unzOpen is utf8?
+			}
 
-				if (!_file)
-					return;
+			bool isValid() const {
+				return _file != NULL;
 			}
 
 			bool unzip() {

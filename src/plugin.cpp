@@ -1,6 +1,5 @@
 ﻿#include "stdinc.h"
-#include "UI/UpdateWnd.h"
-#include "Updater/FilePath.h"
+#include "Updater/CheckThread.h"
 
 WTWPLUGINFO plugInfo = {
 	sizeof(WTWPLUGINFO),						// rozmiar struktury
@@ -39,9 +38,10 @@ int __stdcall pluginLoad(DWORD callReason, WTWFUNCTIONS* fn) {
 #endif
 	wtwUpdate::updater::FilePath::initDirPaths(fn);
 
-	HWND hMain;
-	fn->fnCall(WTW_GET_MAIN_HWND_EX, reinterpret_cast<WTW_PARAM>(&hMain), NULL);
-	wtwUpdate::ui::UpdateWnd wnd(hInst, hMain);
+	wtwUpdate::updater::CheckThread tt;
+	//HWND hMain;
+	//fn->fnCall(WTW_GET_MAIN_HWND_EX, reinterpret_cast<WTW_PARAM>(&hMain), NULL);
+	//wtwUpdate::ui::UpdateWnd wnd(hInst, hMain);
 
     return 0;
 }

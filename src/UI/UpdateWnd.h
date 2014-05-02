@@ -5,7 +5,9 @@
 #include "SearchBar.h"
 #include "AddonsTree.h"
 #include "HtmlEdit.h"
-#include "../Updater/ZipFile.h"
+#include "../Updater/InstallThread.h"
+
+#include "cpp/Json.h"
 
 namespace wtwUpdate {
 	namespace ui {
@@ -13,6 +15,7 @@ namespace wtwUpdate {
 			SearchBar* _searchBar;
 			AddonsTree* _tree;
 			HtmlEdit* _text;
+			wtw::CJson* _json;
 
 			void freeControls() {
 				if (_searchBar) delete _searchBar;
@@ -28,7 +31,6 @@ namespace wtwUpdate {
 					wnd->freeControls();
 					wnd->_searchBar = new SearchBar(GetDlgItem(hDlg, IDC_SEARCH_BAR), NULL);
 					wnd->_tree = new AddonsTree(GetDlgItem(hDlg, IDC_TREE));
-					wnd->_tree->setJson(downloadJson(L"http://muh.cba.pl/central.json"));
 					wnd->_text = new HtmlEdit(GetDlgItem(hDlg, IDC_TEXT));
 					return TRUE;
 				}
@@ -41,8 +43,7 @@ namespace wtwUpdate {
 					switch (wParam) {
 					case IDOK: {
 						UpdateWnd* wnd = reinterpret_cast<UpdateWnd*>(GetProp(hDlg, L"PTR"));
-						std::vector<json::Addon> selected = wnd->_tree->getSelected();
-						update(selected);
+						updater::InstallThread::start(wnd->_tree->getSelected());
 						EndDialog(hDlg, NULL);
 						return TRUE;
 					}
@@ -71,122 +72,12 @@ namespace wtwUpdate {
 				_text->setText(_tree->getDescription(id));
 			}
 
-			// TODO: separate thread and not in this class
-			static wtw::CJson* downloadJson(const std::wstring& url) {
-				wtw::CInternetHttp http;
-				wtw::CBuffer buff;
-				if (FAILED(http.downloadFile(url.c_str(), buff))) {
-					// TODO: log
-					return NULL;
-				}
-
-				// parse
-				const char* webpage = reinterpret_cast<const char*>(buff.getBuffer());
-				wtw::CJson* json = wtw::CJson::load(webpage);
-				wtw::CJson* tree;
-				if (!json || !(tree = json->find("update"))) {
-					// TODO: log
-					return NULL;
-				}
-
-				return tree;
-			}
-
-			class TmpFile {
-				std::wstring _path;
-			public:
-				TmpFile() {
-					wchar_t path[MAX_PATH + 1], fn[MAX_PATH + 1];
-					if (!GetTempPath(MAX_PATH, path))
-						return;
-
-					if(GetTempFileName(path, L"wtwUpdate-", 0, fn))
-						_path = fn;
-				}
-
-				const std::wstring& getPath() const {
-					return _path;
-				}
-
-				bool isValid() const {
-					return _path.size() > 0;
-				}
-
-				bool write(const void* buff, size_t len) {
-					FILE* f = _wfopen(_path.c_str(), L"wb");
-					if (!f)
-						return false;
-
-					if (fwrite(buff, 1, len, f) != len) {
-						fclose(f);
-						return false;
-					}
-
-					fclose(f);
-					return true;
-				}
-
-				void remove() {
-					if (_path.size() > 0) {
-						DeleteFile(_path.c_str());
-						_path = L"";
-					}
-				}
-			};
-
-			// TODO: in WTW cache? download buffering?
-			static TmpFile download2cache(const wchar_t* url) {
-				wtw::CInternetHttp http;
-				wtw::CBuffer buff;
-				if (FAILED(http.downloadFile(url, buff)))
-					return TmpFile();
-
-				TmpFile f;
-				if (!f.write(buff.getBuffer(), buff.getLength())) {
-					f.remove();
-					return TmpFile();
-				}
-
-				return f;
-			}
-
-			// TODO: separate thread and not in this class
-			static void update(const std::vector<json::Addon>& addons) {
-				// TODO: extend list with dependencies
-
-
-				size_t len = addons.size();
-				for (size_t i = 0; i < len; i++) {
-					const json::Addon& addon = addons[i];
-
-					if (addon.getInstallationState() == json::Addon::INSTALLED)
-						continue;
-
-					// TODO: inheritance of section's "dir"
-					wchar_t zipUrl[1024];
-					wchar_t* id = wtw::CConv::mtow(addon.getId().c_str());
-					wchar_t* urlBase = wtw::CConv::mtow(addon.getParent()->getDir().c_str());
-					wsprintf(zipUrl, L"%s/%s-%u.zip", urlBase, id, addon.getTime());
-					wtw::CConv::release(urlBase);
-					wtw::CConv::release(id);
-
-					TmpFile f = download2cache(zipUrl);
-
-					if (f.isValid()) {
-						// TODO: error checking
-						wtwUpdate::updater::ZipFile zip(f.getPath());
-						zip.unzip();
-						f.remove();
-					}
-				}
-			}
 		public:
-			UpdateWnd(HINSTANCE hInst, HWND parent) {
+			UpdateWnd(wtw::CJson* json) : _json(json) {
 				_searchBar = NULL;
 				_tree = NULL;
 				_text = NULL;
-				if (parent)
-					DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_UPDATE), NULL, DlgProc, reinterpret_cast<LPARAM>(this));
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATE), NULL, DlgProc, reinterpret_cast<LPARAM>(this));
 			}
 
 			~UpdateWnd() {

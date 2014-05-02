@@ -34,3 +34,27 @@
 #endif
 
 #define MDL	L"UPDT"
+
+#include "cpp/Conv.h"
+
+static std::wstring utow(const char* str) {
+	wchar_t* w = wtw::CConv::utow(str);
+	std::wstring ret(w);
+	wtw::CConv::release(w);
+	return ret;
+}
+
+static std::wstring utow(const std::string& str) {
+	return utow(str.c_str());
+}
+
+static std::string wtou(const wchar_t* str) {
+	char* s = wtw::CConv::wtou(str);
+	std::string ret(s);
+	wtw::CConv::release(s);
+	return ret;
+}
+
+static std::string wtou(const std::wstring& str) {
+	return wtou(str.c_str());
+}

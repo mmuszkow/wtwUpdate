@@ -12,8 +12,6 @@
 namespace wtwUpdate {
 	namespace json {
 		class Addon : public Obj {
-			const Section* _parent;
-
 			std::string _id;
 			std::string _name;
 			std::string _author;
@@ -24,6 +22,7 @@ namespace wtwUpdate {
 			std::vector<std::string> _depends;
 			std::vector<File> _files;
 			std::vector<Rev> _revs;
+			std::string _zipUrl;
 
 			static __int64 ft2unix(const FILETIME& ft) {
 				LARGE_INTEGER date, adjust;
@@ -36,11 +35,9 @@ namespace wtwUpdate {
 		public:
 			Addon() {
 				_time = _size = 0;
-				_parent = NULL;
 			}
 
-			Addon(wtw::CJson* json, const Section& section) : Obj(json) {
-				_parent = &section; // TODO: is this safe? maybe a copy is better?
+			Addon(wtw::CJson* json, const std::string& dir) : Obj(json) {
 				_id = getStr("id");
 				_name = getStr("name");
 				_author = getStr("author");
@@ -51,10 +48,9 @@ namespace wtwUpdate {
 				_depends = getStrArray("depends");
 				_files = getObjArray<File>("file");
 				_revs = getObjArray<Rev>("rev");
-			}
-
-			const Section* getParent() const {
-				return _parent;
+				char zipUrl[1024];
+				sprintf_s(zipUrl, 1024, "%s/%s-%u.zip", dir.c_str(), _id, _time);
+				_zipUrl = zipUrl;
 			}
 
 			inline const std::string& getId() const {
@@ -95,6 +91,10 @@ namespace wtwUpdate {
 
 			const std::vector<Rev>& getRevisions() const {
 				return _revs;
+			}
+
+			const std::string& getZipUrl() const {
+				return "";
 			}
 
 			enum InstallState { NOT_INSTALLED, INSTALLED, MODIFIED };

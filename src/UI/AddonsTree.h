@@ -168,7 +168,7 @@ namespace wtwUpdate {
 				}				else {
 					if (parent->type == TreeItem::NODE) {
 						SectionNode* sectionNode = static_cast<SectionNode*>(parent);
-						json::Addon addon(jsonAddon, sectionNode->getSection());
+						json::Addon addon(jsonAddon, sectionNode->getSection().getDir());
 						// TODO: checkbox for installed, some other checkbox for those needing update
 						insert(new AddonLeaf(addon), parent, addon.getInstallationState() == json::Addon::INSTALLED);
 					} else {
