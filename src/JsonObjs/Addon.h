@@ -120,10 +120,10 @@ namespace wtwUpdate {
 						return MODIFIED;
 					}
 
-					// modification date mismatch
-					__int64 mTime = ft2unix(fData.ftLastWriteTime);
-					if (mTime != f.getTime())
-						return MODIFIED;
+					// modification date mismatch, TODO: needs unzip to put valid mod date
+					//__int64 mTime = ft2unix(fData.ftLastWriteTime);
+					//if (mTime != f.getTime())
+						//return MODIFIED;
 
 					ret = INSTALLED;
 				}

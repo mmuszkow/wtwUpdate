@@ -25,8 +25,10 @@
 
 #ifdef _M_IX86
 #pragma comment (lib,"../API/libs/lib/libWTW_Release_Win32_libWTW.lib")
+#pragma comment (lib,"../API/libs/lib/libZlib_Release_Win32_libZlib.lib")
 #elif _M_X64
 #pragma comment (lib,"../API/libs/lib/libWTW_Release_x64_libWTW.lib")
+#pragma comment (lib,"../API/libs/lib/libZlib_Release_x64_libZlib.lib")
 #else
 #error Unknown arch
 #endif

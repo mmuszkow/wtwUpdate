@@ -5,6 +5,7 @@
 #include "SearchBar.h"
 #include "AddonsTree.h"
 #include "HtmlEdit.h"
+#include "../Updater/ZipFile.h"
 
 namespace wtwUpdate {
 	namespace ui {
@@ -27,7 +28,7 @@ namespace wtwUpdate {
 					wnd->freeControls();
 					wnd->_searchBar = new SearchBar(GetDlgItem(hDlg, IDC_SEARCH_BAR), NULL);
 					wnd->_tree = new AddonsTree(GetDlgItem(hDlg, IDC_TREE));
-					wnd->_tree->setJson(downloadJson(L"http://localhost/central.json"));
+					wnd->_tree->setJson(downloadJson(L"http://muh.cba.pl/central.json"));
 					wnd->_text = new HtmlEdit(GetDlgItem(hDlg, IDC_TEXT));
 					return TRUE;
 				}
@@ -91,11 +92,69 @@ namespace wtwUpdate {
 				return tree;
 			}
 
+			class TmpFile {
+				std::wstring _path;
+			public:
+				TmpFile() {
+					wchar_t path[MAX_PATH + 1], fn[MAX_PATH + 1];
+					if (!GetTempPath(MAX_PATH, path))
+						return;
+
+					if(GetTempFileName(path, L"wtwUpdate-", 0, fn))
+						_path = fn;
+				}
+
+				const std::wstring& getPath() const {
+					return _path;
+				}
+
+				bool isValid() const {
+					return _path.size() > 0;
+				}
+
+				bool write(const void* buff, size_t len) {
+					FILE* f = _wfopen(_path.c_str(), L"wb");
+					if (!f)
+						return false;
+
+					if (fwrite(buff, 1, len, f) != len) {
+						fclose(f);
+						return false;
+					}
+
+					fclose(f);
+					return true;
+				}
+
+				void remove() {
+					if (_path.size() > 0) {
+						DeleteFile(_path.c_str());
+						_path = L"";
+					}
+				}
+			};
+
+			// TODO: in WTW cache? download buffering?
+			static TmpFile download2cache(const wchar_t* url) {
+				wtw::CInternetHttp http;
+				wtw::CBuffer buff;
+				if (FAILED(http.downloadFile(url, buff)))
+					return TmpFile();
+
+				TmpFile f;
+				if (!f.write(buff.getBuffer(), buff.getLength())) {
+					f.remove();
+					return TmpFile();
+				}
+
+				return f;
+			}
+
 			// TODO: separate thread and not in this class
 			static void update(const std::vector<json::Addon>& addons) {
 				// TODO: extend list with dependencies
 
-				wtw::CInternetHttp http;
+
 				size_t len = addons.size();
 				for (size_t i = 0; i < len; i++) {
 					const json::Addon& addon = addons[i];
@@ -111,14 +170,14 @@ namespace wtwUpdate {
 					wtw::CConv::release(urlBase);
 					wtw::CConv::release(id);
 
-					// TODO: download into cache file, not into memory
-					wtw::CBuffer buff;
-					if (FAILED(http.downloadFile(zipUrl, buff))) {
-						// TODO: log
-						continue;
-					}
+					TmpFile f = download2cache(zipUrl);
 
-					// TODO: unzip to WTW directory, change variables to real directories names where necessary (FilePath class)
+					if (f.isValid()) {
+						// TODO: error checking
+						wtwUpdate::updater::ZipFile zip(f.getPath());
+						zip.unzip();
+						f.remove();
+					}
 				}
 			}
 		public:
