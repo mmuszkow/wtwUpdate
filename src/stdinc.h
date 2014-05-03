@@ -23,12 +23,15 @@
 # include <crtdbg.h>
 #endif
 
+#pragma comment (lib, "Comctl32.lib")
+#pragma comment (lib, "Gdiplus.lib")
+
 #ifdef _M_IX86
-#pragma comment (lib,"../API/libs/lib/libWTW_Release_Win32_libWTW.lib")
-#pragma comment (lib,"../API/libs/lib/libZlib_Release_Win32_libZlib.lib")
+#pragma comment (lib, "../API/libs/lib/libWTW_Release_Win32_libWTW.lib")
+#pragma comment (lib, "../API/libs/lib/libZlib_Release_Win32_libZlib.lib")
 #elif _M_X64
-#pragma comment (lib,"../API/libs/lib/libWTW_Release_x64_libWTW.lib")
-#pragma comment (lib,"../API/libs/lib/libZlib_Release_x64_libZlib.lib")
+#pragma comment (lib, "../API/libs/lib/libWTW_Release_x64_libWTW.lib")
+#pragma comment (lib, "../API/libs/lib/libZlib_Release_x64_libZlib.lib")
 #else
 #error Unknown arch
 #endif
@@ -58,3 +61,5 @@ static std::string wtou(const wchar_t* str) {
 static std::string wtou(const std::wstring& str) {
 	return wtou(str.c_str());
 }
+
+#define LOG_ERR(fn, fmt, ...) __LOG_F(fn, WTW_LOG_LEVEL_ERROR, MDL, fmt, __VA_ARGS__)

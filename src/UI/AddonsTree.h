@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <CommCtrl.h>
 
 #include "Control.h"
@@ -52,9 +53,16 @@ namespace wtwUpdate {
 
 		class AddonLeaf : public TreeItem {
 			json::Addon _addon;
+			std::string _fullDesc;
 		public:
 			AddonLeaf(json::Addon addon) : TreeItem(), _addon(addon) { 
 				type = LEAF;
+				std::stringstream ss;
+				ss << "<b>" << addon.getName() << "</b><br>"
+					<< "ver " << addon.getVer() << "<br>"
+					<< "by " << addon.getAuthor() << "<br><br>"
+					<< addon.getDesc();
+				_fullDesc = ss.str();
 			}
 
 			const std::string& getTitle() const {
@@ -62,7 +70,7 @@ namespace wtwUpdate {
 			}
 
 			const std::string& getDesc() const {
-				return _addon.getDesc();
+				return _fullDesc;
 			}
 
 			const json::Addon& getAddon() const {
@@ -96,8 +104,10 @@ namespace wtwUpdate {
 			std::map<LPARAM, TreeItem*> _map;
 			static LPARAM _uid;
 
-			void free(TreeItem* item) {
-				// TODO
+			void freeTree(TreeItem* item) {
+				//if(!item) return;
+				//freeTree(item->child);
+				//freeTree(item->next);
 				//delete item;
 			}
 
@@ -168,7 +178,7 @@ namespace wtwUpdate {
 				}				else {
 					if (parent->type == TreeItem::NODE) {
 						SectionNode* sectionNode = static_cast<SectionNode*>(parent);
-						json::Addon addon(jsonAddon, sectionNode->getSection().getDir());
+						json::Addon addon(jsonAddon, sectionNode->getSection().getDir().c_str());
 						// TODO: checkbox for installed, some other checkbox for those needing update
 						insert(new AddonLeaf(addon), parent, addon.getInstallationState() == json::Addon::INSTALLED);
 					} else {
@@ -177,26 +187,23 @@ namespace wtwUpdate {
 				}
 			}
 		public:
-			AddonsTree(HWND handle) : Control(handle) {
+			AddonsTree(HWND handle, wtw::CJson* root) : Control(handle) {
 				_root = new RootNode();
-			}
-
-			~AddonsTree() {
-				free(_root);
-			}
-
-			inline void clear() {
-				TreeView_DeleteAllItems(getHwnd());
-				_map.clear();
-				free(_root);
-			}
-
-			void setJson(wtw::CJson* root) {
 				if (!root)
 					return;
 
 				clear();
 				insertJsonSection(root, _root);
+			}
+
+			~AddonsTree() {
+				freeTree(_root);
+			}
+
+			inline void clear() {
+				TreeView_DeleteAllItems(getHwnd());
+				_map.clear();
+				freeTree(_root);
 			}
 
 			const std::string getDescription(LPARAM id) {

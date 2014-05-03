@@ -4,7 +4,7 @@
 
 #include "SearchBar.h"
 #include "AddonsTree.h"
-#include "HtmlEdit.h"
+#include "RichEdit/RichEdit.h"
 #include "../Updater/InstallThread.h"
 
 #include "cpp/Json.h"
@@ -12,28 +12,20 @@
 namespace wtwUpdate {
 	namespace ui {
 		class UpdateWnd {
-			SearchBar* _searchBar;
+			//SearchBar* _searchBar;
 			AddonsTree* _tree;
-			HtmlEdit* _text;
-			wtw::CJson* _json;
+			MyRichEdit::RichEdit* _text;
 
 			void freeControls() {
-				if (_searchBar) delete _searchBar;
+				//if (_searchBar) delete _searchBar;
 				if (_tree) delete _tree;
 				if (_text) delete _text;
 			}
 
 			static INT_PTR CALLBACK DlgProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam) {
 				switch (Msg) {
-				case WM_INITDIALOG: {
-					UpdateWnd* wnd = reinterpret_cast<UpdateWnd*>(lParam);
-					SetProp(hDlg, L"PTR", wnd);
-					wnd->freeControls();
-					wnd->_searchBar = new SearchBar(GetDlgItem(hDlg, IDC_SEARCH_BAR), NULL);
-					wnd->_tree = new AddonsTree(GetDlgItem(hDlg, IDC_TREE));
-					wnd->_text = new HtmlEdit(GetDlgItem(hDlg, IDC_TEXT));
+				case WM_INITDIALOG:
 					return TRUE;
-				}
 				case WM_CTLCOLORDLG:
 				case WM_CTLCOLORBTN:
 				case WM_CTLCOLOREDIT:
@@ -42,8 +34,11 @@ namespace wtwUpdate {
 				case WM_COMMAND:
 					switch (wParam) {
 					case IDOK: {
-						UpdateWnd* wnd = reinterpret_cast<UpdateWnd*>(GetProp(hDlg, L"PTR"));
-						updater::InstallThread::start(wnd->_tree->getSelected());
+						UpdateWnd& wnd = UpdateWnd::get();
+						// TODO: some selected to be installed/updated, some to be removed
+						updater::InstallThread& thread = updater::InstallThread::get();
+						thread.setArg(wnd._tree->getSelected(), std::vector<json::Addon>());
+						thread.start();
 						EndDialog(hDlg, NULL);
 						return TRUE;
 					}
@@ -54,10 +49,9 @@ namespace wtwUpdate {
 					return FALSE;
 				case WM_NOTIFY:
 					if (((LPNMHDR)lParam)->code == TVN_SELCHANGED) {
-						UpdateWnd* wnd = reinterpret_cast<UpdateWnd*>(GetProp(hDlg, L"PTR"));
 						LPNMTREEVIEW pnmtv = reinterpret_cast<LPNMTREEVIEW>(lParam);
 						LPARAM id = pnmtv->itemNew.lParam;
-						wnd->selectHandler(id);
+						UpdateWnd::get().selectHandler(id);
 						return 0;
 					}
 					return FALSE;
@@ -69,15 +63,28 @@ namespace wtwUpdate {
 				if (!_text || !_tree)
 					return;
 
-				_text->setText(_tree->getDescription(id));
+				_text->setHtml(utow(_tree->getDescription(id)).c_str());
 			}
 
+			UpdateWnd() : /*_searchBar(NULL),*/ _tree(NULL), _text(NULL) { }
 		public:
-			UpdateWnd(wtw::CJson* json) : _json(json) {
-				_searchBar = NULL;
-				_tree = NULL;
-				_text = NULL;
-				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATE), NULL, DlgProc, reinterpret_cast<LPARAM>(this));
+			bool open(HWND hParent, HINSTANCE hInst, wtw::CJson* json) {
+				HWND hwnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_UPDATE), hParent, DlgProc);
+				if (!hwnd)
+					return false;
+
+				freeControls();
+				//_searchBar = new SearchBar(GetDlgItem(hwnd, IDC_SEARCH_BAR), NULL);
+				_tree = new AddonsTree(GetDlgItem(hwnd, IDC_TREE), json);
+				_text = new MyRichEdit::RichEdit(GetDlgItem(hwnd, IDC_TEXT));
+
+				ShowWindow(hwnd, SW_SHOW);
+				return true;
+			}
+
+			static UpdateWnd& get() {
+				static UpdateWnd instance;
+				return instance;
 			}
 
 			~UpdateWnd() {

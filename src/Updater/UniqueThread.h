@@ -1,62 +1,60 @@
 #pragma once
 
-#include <Windows.h>
+#include "Mutex.h"
 
 namespace wtwUpdate {
 	namespace updater {
-		class Mutex {
-			HANDLE _hMutex;
-		public:
-			Mutex() {
-				_hMutex = CreateMutex(NULL, FALSE, NULL);
-			}
-
-			~Mutex() {
-				CloseHandle(_hMutex);
-			}
-
-			void enter() {
-				WaitForSingleObject(_hMutex, INFINITE);
-			}
-
-			void leave() {
-				ReleaseMutex(_hMutex);
-			}
-		};
-
 		class UniqueThread {
 			Mutex _mutex;
 			bool _running;
-
-			UniqueThread() {
-
-			}
-
+			bool _aborted;			
 		protected:
+			WTWFUNCTIONS* fn;
 
-		public:
-			UniqueThread& get() {
-				static UniqueThread instance;
-				return instance;
+			UniqueThread() : _running(false), _aborted(false), fn(NULL) { }
+
+			void setRunning(bool running) {
+				_mutex.enter();
+				_running = running;
+				_mutex.leave();
 			}
+			
+			bool start(LPTHREAD_START_ROUTINE proc) {
+				if (isRunning()) {
+					// TODO: log
+					return false;
+				}
 
-			bool isRunning() const {
+				_aborted = false;				
+				DWORD threadId;
+				HANDLE hThread = CreateThread(NULL, 0, proc, this, 0, &threadId);
+				if (hThread) {
+					CloseHandle(hThread);
+					return true;
+				}
+				
+				return false;
+			}
+		public:			
+			virtual bool start() = 0;
+
+			bool isRunning() {
 				_mutex.enter();
 				bool ret = _running;
 				_mutex.leave();
 				return ret;
+			}			
+			
+			bool isAborted() const {
+				return _aborted;
+			}
+			
+			void abort() {
+				_aborted = true;
 			}
 
-			void start(LPTHREAD_START_ROUTINE proc) {
-				if (isRunning()) {
-					// TODO: log
-					return;
-				}
-
-				DWORD threadId;
-				HANDLE hThread = CreateThread(NULL, 0, proc, NULL, 0, &threadId);
-				if (hThread)
-					CloseHandle(hThread);
+			void setFn(WTWFUNCTIONS* wtw) {
+				fn = wtw;
 			}
 		};
 	}

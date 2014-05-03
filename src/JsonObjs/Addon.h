@@ -37,7 +37,7 @@ namespace wtwUpdate {
 				_time = _size = 0;
 			}
 
-			Addon(wtw::CJson* json, const std::string& dir) : Obj(json) {
+			Addon(wtw::CJson* json, const char* dir) : Obj(json) {
 				_id = getStr("id");
 				_name = getStr("name");
 				_author = getStr("author");
@@ -49,7 +49,7 @@ namespace wtwUpdate {
 				_files = getObjArray<File>("file");
 				_revs = getObjArray<Rev>("rev");
 				char zipUrl[1024];
-				sprintf_s(zipUrl, 1024, "%s/%s-%u.zip", dir.c_str(), _id, _time);
+				sprintf_s(zipUrl, 1024, "%s/%s-%u.zip", dir, _id.c_str(), _time);
 				_zipUrl = zipUrl;
 			}
 
@@ -94,7 +94,7 @@ namespace wtwUpdate {
 			}
 
 			const std::string& getZipUrl() const {
-				return "";
+				return _zipUrl;
 			}
 
 			enum InstallState { NOT_INSTALLED, INSTALLED, MODIFIED };

@@ -12,13 +12,13 @@
 
 namespace wtwUpdate {
 	namespace updater {
-		class CheckThread : public UniqueThread {
-
-			static wtw::CJson* downloadJson(const std::wstring& url) {
+		class UpdateThread : public UniqueThread {
+		public:
+			wtw::CJson* downloadJson(const std::wstring& url) {
 				wtw::CInternetHttp http;
 				wtw::CBuffer buff;
 				if (FAILED(http.downloadFile(url.c_str(), buff))) {
-					// TODO: log
+					LOG_ERR(fn, L"Failed to download JSON file from %s", url.c_str());
 					return NULL;
 				}
 
@@ -26,48 +26,67 @@ namespace wtwUpdate {
 				const char* webpage = reinterpret_cast<const char*>(buff.getBuffer());
 				wtw::CJson* json = wtw::CJson::load(webpage);
 				if (!json) {
-					// TODO: log
+					LOG_ERR(fn, L"Failed to parse JSON file from %s", url.c_str());
 					return NULL;
 				}
 
 				wtw::CJson* tree = json->find("update");
 				if (!tree) {
 					wtw::CJson::decref(json);
-					// TODO: log
+					LOG_ERR(fn, L"Failed to find update tag in JSON file from %s", url.c_str());
 					return NULL;
 				}
 
 				return tree;
 			}
-
+		protected:
 			static DWORD WINAPI proc(LPVOID args) {
+				UpdateThread* thread = static_cast<UpdateThread*>(args);
+				thread->setRunning(true);
+				
 				// download JSON
-				wtw::CJson* root = downloadJson(L"http://muh.cba.pl/central.json");
+				wtw::CJson* root = thread->downloadJson(L"http://muh.cba.pl/central.json");
 				if (!root) {
-					// TODO: log
+					// logged in downloadJson
+					thread->setRunning(false);
 					return 1;
 				}
 
 				// get all addons and check which need to be updated
+				// TODO: this should be also filtered by installation request, only the addons installed by wtwUpdate should be here
 				json::AddonsList addons(root);				
 				unsigned int needUpdate = 0, i, len = addons.size();
-				for (i = 0; i < len; i++)
+				for (i = 0; i < len; i++) {
+					if(thread->isAborted()) {
+						wtw::CJson::decref(root);
+						thread->setRunning(false);
+						return 0;		
+					}
 					if (addons[i].getInstallationState() == json::Addon::MODIFIED)
 						needUpdate++;
+				}
 
 				if (needUpdate == 0) {
 					wtw::CJson::decref(root);
+					thread->setRunning(false);
 					return 0;
 				}
 
-				// show update wnd, TODO: on click
-				ui::UpdateWnd wnd(root);
+				// TODO: quiet update? wait for user action?
+				//ui::UpdateWnd wnd(root);
 
 				wtw::CJson::decref(root);
+				thread->setRunning(false);
 				return 0;
 			}
 		public:
-			CheckThread() : Thread(proc) {
+			static UpdateThread& get() {
+				static UpdateThread instance;
+				return instance;
+			}
+			
+			bool start() {
+				return UniqueThread::start(proc);
 			}
 		};
 	}

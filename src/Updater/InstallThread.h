@@ -2,6 +2,7 @@
 
 #include "UniqueThread.h"
 #include "../JsonObjs/Addon.h"
+#include "TmpFile.h"
 #include "ZipFile.h"
 
 #include "cpp/Internet.h"
@@ -9,61 +10,23 @@
 namespace wtwUpdate {
 	namespace updater {
 		class InstallThread : public UniqueThread {
-
-			static std::vector<json::Addon> toInstall;
-
-			class TmpFile {
-				std::wstring _path;
-			public:
-				TmpFile() {
-					wchar_t path[MAX_PATH + 1], fn[MAX_PATH + 1];
-					if (!GetTempPath(MAX_PATH, path))
-						return;
-
-					if (GetTempFileName(path, L"wtwUpdate-", 0, fn))
-						_path = fn;
-				}
-
-				const std::wstring& getPath() const {
-					return _path;
-				}
-
-				bool isValid() const {
-					return _path.size() > 0;
-				}
-
-				bool write(const void* buff, size_t len) {
-					FILE* f = _wfopen(_path.c_str(), L"wb");
-					if (!f)
-						return false;
-
-					if (fwrite(buff, 1, len, f) != len) {
-						fclose(f);
-						return false;
-					}
-
-					fclose(f);
-					return true;
-				}
-
-				void remove() {
-					if (_path.size() > 0) {
-						DeleteFile(_path.c_str());
-						_path = L"";
-					}
-				}
-			};
+			// it's a singleton so this is used for currently running
+			std::vector<json::Addon> _toInstall;
+			std::vector<json::Addon> _toRemove;
 
 			// TODO: in WTW cache? download buffering?
-			static TmpFile download2cache(const wchar_t* url) {
+			TmpFile download2cache(const wchar_t* url) {
 				wtw::CInternetHttp http;
 				wtw::CBuffer buff;
-				if (FAILED(http.downloadFile(url, buff)))
+				if (FAILED(http.downloadFile(url, buff))) {
+					LOG_ERR(fn, L"Failed to download %s", url);
 					return TmpFile();
+				}
 
 				TmpFile f;
 				if (!f.write(buff.getBuffer(), buff.getLength())) {
 					f.remove();
+					LOG_ERR(fn, L"Failed to write to %s", f.getPath().c_str());
 					return TmpFile();
 				}
 
@@ -71,28 +34,64 @@ namespace wtwUpdate {
 			}
 
 			static DWORD WINAPI proc(LPVOID args) {
-				size_t len = toInstall.size();
-				for (size_t i = 0; i < len; i++) {
-					const json::Addon& addon = toInstall[i];
+				InstallThread* thread = static_cast<InstallThread*>(args);
+				thread->setRunning(true);
+
+				size_t toInstallLen = thread->_toInstall.size();
+
+				// TODO: check dependencies
+
+				// TODO: check conflicts
+
+				// TODO: remove
+
+				// install
+				for (size_t i = 0; i < toInstallLen; i++) {
+					const json::Addon& addon = thread->_toInstall[i];
 
 					if (addon.getInstallationState() == json::Addon::INSTALLED)
 						continue;
 
-					TmpFile f = download2cache(utow(addon.getZipUrl()).c_str());
+					TmpFile f = thread->download2cache(utow(addon.getZipUrl()).c_str());
 
 					if (f.isValid()) {
 						ZipFile zip(f.getPath());
-						if (!zip.isValid() || !zip.unzip()) {
-							// TODO: log
+						if (!zip.isValid()) {
+							std::wstring addonId = utow(addon.getId());
+							LOG_ERR(thread->fn, L"Zip file for %s is invalid", addonId.c_str());
+						} else if (!zip.unzip()) {
+							std::wstring addonId = utow(addon.getId());
+							LOG_ERR(thread->fn, L"Failed to install (unzip) %s", addonId.c_str());
 						}
 						f.remove();
+
+						if (thread->isAborted()) {
+							thread->setRunning(false);
+							return 0;
+						}
 					}
 				}
 
+				thread->_toInstall.clear();
+				thread->setRunning(false);
 				return 0;
 			}
 		public:
-			InstallThread() : UniqueThread(proc) {
+			static InstallThread& get() {
+				static InstallThread instance;
+				return instance;
+			}
+			
+			bool start() {				
+				return UniqueThread::start(proc);
+			}
+
+			void setArg(const std::vector<json::Addon>& toInstall, const std::vector<json::Addon>& toRemove) {
+				if (isRunning())
+					return;
+
+				_toInstall = toInstall;
+				_toRemove = toRemove;
 			}
 		};
 	}

@@ -22,6 +22,12 @@
     <Filter Include="Header Files\Updater">
       <UniqueIdentifier>{0578eb6c-c0e1-41e2-9d74-3d5e6695ea92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI\RichEdit">
+      <UniqueIdentifier>{7b7561d4-5e91-425a-b635-4f3619d8f2ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RichEdit">
+      <UniqueIdentifier>{5cb8916b-3681-4003-8955-2e8bfbdf2147}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -29,6 +35,15 @@
     </ClCompile>
     <ClCompile Include="src\stdinc.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\RichEdit\FastStrBuff.cpp">
+      <Filter>Source Files\RichEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\RichEdit\ImageDataObject.cpp">
+      <Filter>Source Files\RichEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\RichEdit\RichEdit.cpp">
+      <Filter>Source Files\RichEdit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -56,9 +71,6 @@
     <ClInclude Include="src\ui\Control.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\HtmlEdit.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="src\ui\AddonsTree.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -71,17 +83,38 @@
     <ClInclude Include="src\Updater\FilePath.h">
       <Filter>Header Files\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="src\Updater\CheckThread.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
     <ClInclude Include="src\Updater\InstallThread.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Updater\TimerThread.h">
       <Filter>Header Files\Updater</Filter>
     </ClInclude>
     <ClInclude Include="src\Updater\ZipFile.h">
       <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\Mutex.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\TmpFile.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\UniqueThread.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\ThreadScheduler.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\UpdateThread.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JsonObjs\AddonsList.h">
+      <Filter>Header Files\JsonObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\RichEdit\FastStrBuff.h">
+      <Filter>Header Files\UI\RichEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\RichEdit\ImageDataObject.h">
+      <Filter>Header Files\UI\RichEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\RichEdit\RichEdit.h">
+      <Filter>Header Files\UI\RichEdit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

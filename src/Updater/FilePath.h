@@ -54,10 +54,10 @@ namespace wtwUpdate {
 					// TODO: log
 					return false;
 				}
-				wchar_t tmp[1024];
-				swprintf_s(tmp, 1024, L"%sPlugins32", pathBuff);
+				wchar_t tmp[512];
+				swprintf_s(tmp, 512, L"%sPlugins32", pathBuff);
 				_plugins32Dir = tmp;
-				swprintf_s(tmp, 1024, L"%sPlugins64", pathBuff);
+				swprintf_s(tmp, 512, L"%sPlugins64", pathBuff);
 				_plugins64Dir = tmp;
 
 				// plugins data dir
