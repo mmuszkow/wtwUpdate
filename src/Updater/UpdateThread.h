@@ -18,7 +18,7 @@ namespace wtwUpdate {
 				wtw::CInternetHttp http;
 				wtw::CBuffer buff;
 				if (FAILED(http.downloadFile(url.c_str(), buff))) {
-					LOG_ERR(fn, L"Failed to download JSON file from %s", url.c_str());
+					LOG_ERR(L"Failed to download JSON file from %s", url.c_str());
 					return NULL;
 				}
 
@@ -26,14 +26,14 @@ namespace wtwUpdate {
 				const char* webpage = reinterpret_cast<const char*>(buff.getBuffer());
 				wtw::CJson* json = wtw::CJson::load(webpage);
 				if (!json) {
-					LOG_ERR(fn, L"Failed to parse JSON file from %s", url.c_str());
+					LOG_ERR(L"Failed to parse JSON file from %s", url.c_str());
 					return NULL;
 				}
 
 				wtw::CJson* tree = json->find("update");
 				if (!tree) {
 					wtw::CJson::decref(json);
-					LOG_ERR(fn, L"Failed to find update tag in JSON file from %s", url.c_str());
+					LOG_ERR(L"Failed to find update tag in JSON file from %s", url.c_str());
 					return NULL;
 				}
 

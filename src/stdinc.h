@@ -40,6 +40,9 @@
 
 #include "cpp/Conv.h"
 
+static WTWFUNCTIONS* fn;
+static HINSTANCE hInst;
+
 static std::wstring utow(const char* str) {
 	wchar_t* w = wtw::CConv::utow(str);
 	std::wstring ret(w);
@@ -62,4 +65,4 @@ static std::string wtou(const std::wstring& str) {
 	return wtou(str.c_str());
 }
 
-#define LOG_ERR(fn, fmt, ...) __LOG_F(fn, WTW_LOG_LEVEL_ERROR, MDL, fmt, __VA_ARGS__)
+#define LOG_ERR(fmt, ...) __LOG_F(fn, WTW_LOG_LEVEL_ERROR, MDL, fmt, __VA_ARGS__)

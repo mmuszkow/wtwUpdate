@@ -17,6 +17,7 @@ namespace wtwUpdate {
 			static std::wstring _plugins64Dir;
 			static std::wstring _pluginDataDir;
 			static std::wstring _themeDir;
+			static std::wstring _langDir;
 
 			static bool replace(std::wstring& str, const std::wstring& from, const std::wstring& to) {
 				size_t start_pos = str.find(from);
@@ -36,12 +37,13 @@ namespace wtwUpdate {
 				replace(_path, L"__PLUGINS64__", _plugins64Dir);
 				replace(_path, L"__PLUGINDATA__", _pluginDataDir);
 				replace(_path, L"__THEME__", _themeDir);
+				replace(_path, L"__LANG__", _langDir);
 				std::replace(_path.begin(), _path.end(), L'/', L'\\');
 			}
-
+			
 			FilePath(const json::File& file) : FilePath(file.getPath().c_str()) { }
 
-			static bool initDirPaths(WTWFUNCTIONS* fn) {
+			static bool initDirPaths() {
 				wtwDirectoryInfo dirInfo;
 				wchar_t pathBuff[MAX_PATH + 1];
 				dirInfo.flags = WTW_DIRECTORY_FLAG_FULLPATH;
@@ -59,6 +61,8 @@ namespace wtwUpdate {
 				_plugins32Dir = tmp;
 				swprintf_s(tmp, 512, L"%sPlugins64", pathBuff);
 				_plugins64Dir = tmp;
+				swprintf_s(tmp, 512, L"%sI18N", pathBuff);
+				_langDir = tmp;
 
 				// plugins data dir
 				dirInfo.dirType = WTW_DIRECTORY_PLUGINDATA;
@@ -83,11 +87,6 @@ namespace wtwUpdate {
 
 			inline const std::wstring& getPath() const {
 				return _path;
-			}
-
-			// TODO: creates directories
-			bool createDirs() const {
-				return true;
 			}
 		};
 	}

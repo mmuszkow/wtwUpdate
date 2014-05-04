@@ -14,8 +14,7 @@ namespace wtwUpdate {
 					size_t len = json->size();
 					for (size_t i = 0; i < len; i++)
 						recAddon(json->getAt(i));
-				}
-				else {
+				} else {
 					json::Addon addon(json, "");
 					push_back(addon);
 				}
@@ -31,8 +30,7 @@ namespace wtwUpdate {
 						recSection(json->getAt(i)->find("section"));
 						recAddon(json->getAt(i)->find("addon"));
 					}
-				}
-				else {
+				} else {
 					recSection(json->find("section"));
 					recAddon(json->find("addon"));
 				}

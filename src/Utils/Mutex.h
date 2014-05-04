@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 namespace wtwUpdate {
-	namespace updater {
+	namespace utils {
 		class Mutex {
 			HANDLE _hMutex;
 		public:

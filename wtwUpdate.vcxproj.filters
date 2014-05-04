@@ -28,6 +28,12 @@
     <Filter Include="Source Files\RichEdit">
       <UniqueIdentifier>{5cb8916b-3681-4003-8955-2e8bfbdf2147}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{52fe1b73-ff02-4a66-b641-5da5b07dda3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{86ae3449-375f-4629-acb5-33c8f0ea63ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -44,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="src\UI\RichEdit\RichEdit.cpp">
       <Filter>Source Files\RichEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\BinaryFile.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,12 +98,6 @@
     <ClInclude Include="src\Updater\ZipFile.h">
       <Filter>Header Files\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="src\Updater\Mutex.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Updater\TmpFile.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
     <ClInclude Include="src\Updater\UniqueThread.h">
       <Filter>Header Files\Updater</Filter>
     </ClInclude>
@@ -115,6 +118,21 @@
     </ClInclude>
     <ClInclude Include="src\UI\RichEdit\RichEdit.h">
       <Filter>Header Files\UI\RichEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\WtwMenuItem.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Mutex.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Settings.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\BinaryFile.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Dir.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -208,6 +208,7 @@
     <ClCompile Include="src\UI\RichEdit\FastStrBuff.cpp" />
     <ClCompile Include="src\UI\RichEdit\ImageDataObject.cpp" />
     <ClCompile Include="src\UI\RichEdit\RichEdit.cpp" />
+    <ClCompile Include="src\Utils\BinaryFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\JsonObjs\Addon.h" />
@@ -225,14 +226,17 @@
     <ClInclude Include="src\UI\RichEdit\RichEdit.h" />
     <ClInclude Include="src\ui\SearchBar.h" />
     <ClInclude Include="src\ui\UpdateWnd.h" />
+    <ClInclude Include="src\UI\WtwMenuItem.h" />
     <ClInclude Include="src\Updater\UpdateThread.h" />
     <ClInclude Include="src\Updater\FilePath.h" />
     <ClInclude Include="src\Updater\InstallThread.h" />
-    <ClInclude Include="src\Updater\Mutex.h" />
     <ClInclude Include="src\Updater\ThreadScheduler.h" />
-    <ClInclude Include="src\Updater\TmpFile.h" />
     <ClInclude Include="src\Updater\UniqueThread.h" />
     <ClInclude Include="src\Updater\ZipFile.h" />
+    <ClInclude Include="src\Utils\BinaryFile.h" />
+    <ClInclude Include="src\Utils\Dir.h" />
+    <ClInclude Include="src\Utils\Mutex.h" />
+    <ClInclude Include="src\Utils\Settings.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\wtwUpdate.def" />

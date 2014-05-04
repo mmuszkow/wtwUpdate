@@ -1,17 +1,15 @@
 #pragma once
 
-#include "Mutex.h"
+#include "../Utils/Mutex.h"
 
 namespace wtwUpdate {
 	namespace updater {
 		class UniqueThread {
-			Mutex _mutex;
+			utils::Mutex _mutex;
 			bool _running;
 			bool _aborted;			
 		protected:
-			WTWFUNCTIONS* fn;
-
-			UniqueThread() : _running(false), _aborted(false), fn(NULL) { }
+			UniqueThread() : _running(false), _aborted(false) { }
 
 			void setRunning(bool running) {
 				_mutex.enter();
@@ -51,10 +49,6 @@ namespace wtwUpdate {
 			
 			void abort() {
 				_aborted = true;
-			}
-
-			void setFn(WTWFUNCTIONS* wtw) {
-				fn = wtw;
 			}
 		};
 	}

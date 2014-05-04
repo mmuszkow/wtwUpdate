@@ -2,7 +2,7 @@
 
 #include "UniqueThread.h"
 #include "../JsonObjs/Addon.h"
-#include "TmpFile.h"
+#include "../Utils/BinaryFile.h"
 #include "ZipFile.h"
 
 #include "cpp/Internet.h"
@@ -15,22 +15,29 @@ namespace wtwUpdate {
 			std::vector<json::Addon> _toRemove;
 
 			// TODO: in WTW cache? download buffering?
-			TmpFile download2cache(const wchar_t* url) {
+			bool download2cache(utils::BinaryFile& f, const wchar_t* url) {
 				wtw::CInternetHttp http;
 				wtw::CBuffer buff;
-				if (FAILED(http.downloadFile(url, buff))) {
-					LOG_ERR(fn, L"Failed to download %s", url);
-					return TmpFile();
+
+				if (!f.openTmp()) {
+					LOG_ERR(L"Failed to create temporary file for downloaded file");
+					return false;
 				}
 
-				TmpFile f;
+				if (FAILED(http.downloadFile(url, buff))) {
+					f.remove();
+					LOG_ERR(L"Failed to download %s", url);
+					return false;
+				}
+				
 				if (!f.write(buff.getBuffer(), buff.getLength())) {
 					f.remove();
-					LOG_ERR(fn, L"Failed to write to %s", f.getPath().c_str());
-					return TmpFile();
+					LOG_ERR(L"Failed to write to %s", f.getPath().c_str());
+					return false;
 				}
 
-				return f;
+				f.close();
+				return true;
 			}
 
 			static DWORD WINAPI proc(LPVOID args) {
@@ -52,23 +59,22 @@ namespace wtwUpdate {
 					if (addon.getInstallationState() == json::Addon::INSTALLED)
 						continue;
 
-					TmpFile f = thread->download2cache(utow(addon.getZipUrl()).c_str());
-
-					if (f.isValid()) {
+					utils::BinaryFile f;
+					if (thread->download2cache(f, utow(addon.getZipUrl()).c_str())) {
 						ZipFile zip(f.getPath());
 						if (!zip.isValid()) {
 							std::wstring addonId = utow(addon.getId());
-							LOG_ERR(thread->fn, L"Zip file for %s is invalid", addonId.c_str());
+							LOG_ERR(L"Zip file for %s is invalid", addonId.c_str());
 						} else if (!zip.unzip()) {
 							std::wstring addonId = utow(addon.getId());
-							LOG_ERR(thread->fn, L"Failed to install (unzip) %s", addonId.c_str());
+							LOG_ERR(L"Failed to install (unzip) %s", addonId.c_str());
 						}
 						f.remove();
+					}
 
-						if (thread->isAborted()) {
-							thread->setRunning(false);
-							return 0;
-						}
+					if (thread->isAborted()) {
+						thread->setRunning(false);
+						return 0;
 					}
 				}
 
@@ -82,7 +88,7 @@ namespace wtwUpdate {
 				return instance;
 			}
 			
-			bool start() {				
+			bool start() {
 				return UniqueThread::start(proc);
 			}
 

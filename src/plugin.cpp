@@ -1,6 +1,7 @@
 ﻿#include "stdinc.h"
-#include "UI/UpdateWnd.h"
 #include "UI/RichEdit/RichEdit.h"
+#include "UI/UpdateWnd.h"
+#include "UI/WtwMenuItem.h"
 #include "Updater/UpdateThread.h"
 #include "Updater/ThreadScheduler.h"
 
@@ -22,7 +23,6 @@ WTWPLUGINFO plugInfo = {
 	0, 0, 0, 0									// zarezerwowane (4 pola)
 };
 
-HINSTANCE hInst = NULL;
 HWND hMain = NULL;
 
 using namespace wtwUpdate::ui;
@@ -39,48 +39,44 @@ WTWPLUGINFO* __stdcall queryPlugInfo(DWORD apiVersion, DWORD masterVersion) {
     return &plugInfo;
 }
 
-WTW_PTR wtwMenuClickFunc(WTW_PARAM, WTW_PARAM, void* cData) {
-	wtw::CJson* json = UpdateThread::get().downloadJson(L"http://muh.cba.pl/central.json");
-	wtwUpdate::ui::UpdateWnd::get().open(hMain, hInst, json);
-	return 0;
-}
+class UpdateWndMenuItem : public WtwMenuItem {
+	static WTW_PTR wtwMenuClickFunc(WTW_PARAM, WTW_PARAM, void* cData) {
+		wtw::CJson* json = UpdateThread::get().downloadJson(L"http://muh.cba.pl/central.json");
+		wtwUpdate::ui::UpdateWnd::get().open(hMain, hInst, json);
+		return 0;
+	}
+public:
+	UpdateWndMenuItem() : WtwMenuItem(WTW_MENU_ID_MAIN_OPT, L"wtwUpdate/updateWnd", L"Aktualizuj", wtwMenuClickFunc) {
+	}
+};
 
-int __stdcall pluginLoad(DWORD callReason, WTWFUNCTIONS* fn) {
+UpdateWndMenuItem* menuItem;
+
+int __stdcall pluginLoad(DWORD callReason, WTWFUNCTIONS* _fn) {
 #ifdef _DEBUG
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-	FilePath::initDirPaths(fn);
+	fn = _fn;
+	FilePath::initDirPaths();
 	MyRichEdit::RichEdit::libInit();
 
 	
 	UpdateThread& updateThread = UpdateThread::get();
-	updateThread.setFn(fn);
-	InstallThread::get().setFn(fn);
-
 	ThreadScheduler& scheduler = ThreadScheduler::get();
-	scheduler.setWtwFn(fn);
 	scheduler.schedule(updateThread, 300000, true); // 5 min after start
 	scheduler.schedule(updateThread, 86400000, false); // once every 24h
 
 	fn->fnCall(WTW_GET_MAIN_HWND_EX, reinterpret_cast<WTW_PARAM>(&hMain), NULL);
 
-	wtwMenuItemDef menuDef;
-	menuDef.menuID = WTW_MENU_ID_MAIN_OPT;
-	menuDef.callback = wtwMenuClickFunc;
-	menuDef.itemId = L"wtwUpdate/updateWnd";
-	menuDef.menuCaption = L"Aktualizuj";
-	fn->fnCall(WTW_MENU_ITEM_ADD, menuDef, NULL);
+	menuItem = new UpdateWndMenuItem();
 
     return 0;
 }
 
 int __stdcall pluginUnload(DWORD callReason) {
-	ThreadScheduler::get().destroyAll();
+	delete menuItem;
 
-	//wtwMenuItemDef menuDef;
-	//menuDef.menuID = WTW_MENU_ID_MAIN_OPT;
-	//menuDef.itemId = L"wtwUpdate/updateWnd";
-	//fn->fnCall(WTW_MENU_ITEM_ADD, menuDef, NULL);
+	ThreadScheduler::get().destroyAll();
 
 	MyRichEdit::RichEdit::libDeinit();
 
