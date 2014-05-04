@@ -25,13 +25,13 @@ namespace wtwUpdate {
 				}
 
 				if (FAILED(http.downloadFile(url, buff))) {
-					f.remove();
+					f.del();
 					LOG_ERR(L"Failed to download %s", url);
 					return false;
 				}
 				
 				if (!f.write(buff.getBuffer(), buff.getLength())) {
-					f.remove();
+					f.del();
 					LOG_ERR(L"Failed to write to %s", f.getPath().c_str());
 					return false;
 				}
@@ -69,7 +69,7 @@ namespace wtwUpdate {
 							std::wstring addonId = utow(addon.getId());
 							LOG_ERR(L"Failed to install (unzip) %s", addonId.c_str());
 						}
-						f.remove();
+						f.del();
 					}
 
 					if (thread->isAborted()) {

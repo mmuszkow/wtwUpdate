@@ -25,11 +25,10 @@ namespace wtwUpdate {
 			std::string _zipUrl;
 
 			static __int64 ft2unix(const FILETIME& ft) {
-				LARGE_INTEGER date, adjust;
+				LARGE_INTEGER date;
 				date.HighPart = ft.dwHighDateTime;
 				date.LowPart = ft.dwLowDateTime;
-				adjust.QuadPart = 11644473600000 * 10000;
-				date.QuadPart -= adjust.QuadPart;
+				date.QuadPart -= 116444736000000000;
 				return date.QuadPart / 10000000;
 			}
 		public:
@@ -100,7 +99,7 @@ namespace wtwUpdate {
 			enum InstallState { NOT_INSTALLED, INSTALLED, MODIFIED };
 
 			InstallState getInstallationState() const {
-				size_t files = _files.size();
+				size_t files = _files.size(), installedCount = 0;
 				InstallState ret = NOT_INSTALLED;
 				for (size_t i = 0; i < files; i++) {
 					const File& f = _files[i];
@@ -108,26 +107,29 @@ namespace wtwUpdate {
 					WIN32_FIND_DATA fData;
 					HANDLE hFile = FindFirstFile(path.getPath().c_str(), &fData);
 					// file doesn't exist
-					if (hFile == INVALID_HANDLE_VALUE) {
+					if (hFile == INVALID_HANDLE_VALUE)
 						continue;
-					}
 
-					FindClose(hFile);
+					FindClose(hFile);					
 
 					// size mismatch
 					__int64 fSize = ((__int64)fData.nFileSizeHigh << 32) | fData.nFileSizeLow;
-					if (fSize != f.getSize()) {
+					if (fSize != f.getSize())
 						return MODIFIED;
-					}
 
 					// modification date mismatch, TODO: needs unzip to put valid mod date
 					//__int64 mTime = ft2unix(fData.ftLastWriteTime);
 					//if (mTime != f.getTime())
 						//return MODIFIED;
 
-					ret = INSTALLED;
+					installedCount++;
 				}
-				return ret;
+
+				if (installedCount == 0)
+					return NOT_INSTALLED;
+				if (installedCount == files)
+					return INSTALLED;
+				return MODIFIED;
 			}
 		};
 	}

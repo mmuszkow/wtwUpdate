@@ -14,26 +14,22 @@ namespace wtwUpdate {
 			std::vector<utils::BinaryFile> _created;
 			std::vector<utils::FileCopy> _existingCopies;
 
-			// TODO: if unzipping of any file failed and file existed before, restores it to previous version
 			void rollback() {				
 				size_t i, len = _created.size();
 				for (i = 0; i < len; i++)
-					_created[i].remove();
+					_created[i].del();
 				len = _existingCopies.size();
-				for (i = 0; i < len; i++) {
-					utils::FileCopy out;
-					utils::FileCopy& in = _existingCopies[i];
-					if (out.open(in.getOriginalPath(), L"wb")) {
-						in.copy(out);
-						out.close();
-					}
-					in.remove();
-				}
+				for (i = 0; i < len; i++)
+					_existingCopies[i].bringBack();
 
 			}
 		public:
 			ZipFile(const std::wstring& fn) {
 				_file = unzOpen(wtou(fn).c_str()); // TODO: unzOpen is utf8?
+			}
+
+			~ZipFile() {
+				if (_file) unzClose(_file);
 			}
 
 			bool isValid() const {
@@ -45,6 +41,7 @@ namespace wtwUpdate {
 					return false;
 
 				_created.clear();
+				_existingCopies.clear();
 
 				unz_global_info global_info;
 				if (unzGetGlobalInfo(_file, &global_info) != UNZ_OK) {
@@ -70,7 +67,7 @@ namespace wtwUpdate {
 					if (lastC != '\\' && lastC != '/')	{
 						utils::Dir dir(path.getPath());
 						if (!dir.exists() && !dir.create()) {
-							LOG_ERR(L"Could not create the directory %s, errno = %d", path.getPath().c_str(), errno);
+							LOG_ERR(L"Could not create the directory for %s", path.getPath().c_str());
 							rollback();
 							return false;
 						}
@@ -85,27 +82,26 @@ namespace wtwUpdate {
 						// TODO: set modification date included in zip file
 						
 						// make a copy of existing file
-						utils::BinaryFile existing;
-						if (existing.open(path.getPath(), L"rb")) {
-							utils::FileCopy copy;
-							if (!copy.openTmp()) {
-								LOG_ERR(L"Failed to create temporary file for copy");
-								existing.close();
-								rollback();
-								return false;
-							}
-
-							if (!existing.copy(copy)) {
+						if (utils::BinaryFile::exists(path.getPath())) {
+							utils::FileCopy copy(path.getPath());
+							if (!copy.created()) {
 								LOG_ERR(L"Coping existing file %s failed", path.getPath().c_str());
-								existing.close();
-								copy.remove();
+								unzCloseCurrentFile(_file);
 								rollback();
 								return false;
 							}
 
-							existing.close();
 							_existingCopies.push_back(copy);
 						}
+
+						unz_file_info info;
+						if (unzGetCurrentFileInfo(_file, &info, NULL, 0, NULL, 0, NULL, 0) != UNZ_OK) {
+							LOG_ERR(L"unzGetCurrentFileInfo failed for %s", path.getPath().c_str());
+							unzCloseCurrentFile(_file);
+							rollback();
+							return false;
+						}
+						int a = info.dosDate;
 
 						// unpack
 						utils::BinaryFile out;
@@ -132,6 +128,13 @@ namespace wtwUpdate {
 						} while (error > 0);
 
 						out.close();
+
+						if (!out.setModTime(info.dosDate)) {
+							LOG_ERR(L"Setting modifiaction time for file %s failed", path.getPath().c_str());
+							unzCloseCurrentFile(_file);
+							rollback();
+							return false;
+						}
 					}
 
 					unzCloseCurrentFile(_file);
@@ -148,15 +151,11 @@ namespace wtwUpdate {
 
 				size_t j, len = _existingCopies.size();
 				for (j = 0; j < len; j++)
-					_existingCopies[j].remove();
+					_existingCopies[j].del();
 				_existingCopies.clear();
 				_created.clear();
 
 				return true;
-			}
-
-			~ZipFile() {
-				if(_file) unzClose(_file);
 			}
 		};
 	}

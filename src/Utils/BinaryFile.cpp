@@ -11,14 +11,19 @@ namespace wtwUpdate {
 		}
 
 		bool BinaryFile::openTmp() {
+			std::wstring fn = tmpFn();
+			if (fn.size() > 0)
+				return open(fn, L"wb");
+			return false;
+		}
+
+		std::wstring BinaryFile::tmpFn() {
 			wchar_t path[MAX_PATH + 1], fn[MAX_PATH + 1];
 			if (!GetTempPath(MAX_PATH, path))
-				return false;
-
+				return L"";
 			if (GetTempFileName(path, L"wtw", 0, fn))
-				return open(fn, L"wb");
-
-			return false;
+				return fn;
+			return L"";
 		}
 
 		bool BinaryFile::open(const std::wstring& path, const wchar_t* mode) {
@@ -33,7 +38,7 @@ namespace wtwUpdate {
 			return true;
 		}
 
-		bool BinaryFile::remove() {
+		bool BinaryFile::del() {
 			std::wstring fp = _path;
 			close();
 			return (DeleteFile(fp.c_str()) != 0);
@@ -57,33 +62,6 @@ namespace wtwUpdate {
 			if (!_f)
 				return false;
 			return (fwrite(buff, 1, len, _f) == len);
-		}
-
-		bool BinaryFile::copy(FileCopy& out) {
-			if (!out.isOpen())
-				return false;
-
-			out.setOriginalPath(_path);
-
-			char copyBuff[16384];
-			while (1) {
-				size_t ret = read(copyBuff, 16384);
-				if (ret == -1) {
-					out.remove();
-					return false;
-				}
-
-				if (ret == 0)
-					break;
-
-				if (!out.write(copyBuff, ret)) {
-					out.remove();
-					return false;
-				}
-			}
-
-			out.close();
-			return true;
 		}
 	}
 }
