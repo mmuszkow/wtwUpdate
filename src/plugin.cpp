@@ -42,7 +42,8 @@ WTWPLUGINFO* __stdcall queryPlugInfo(DWORD apiVersion, DWORD masterVersion) {
 class UpdateWndMenuItem : public WtwMenuItem {
 	static WTW_PTR wtwMenuClickFunc(WTW_PARAM, WTW_PARAM, void* cData) {
 		wtw::CJson* json = UpdateThread::get().downloadJson(L"http://muh.cba.pl/central.json");
-		wtwUpdate::ui::UpdateWnd::get().open(hMain, hInst, json);
+		UpdateWnd::get().open(hMain, hInst, json);
+		wtw::CJson::decref(json);
 		return 0;
 	}
 public:
@@ -67,7 +68,6 @@ int __stdcall pluginLoad(DWORD callReason, WTWFUNCTIONS* _fn) {
 	scheduler.schedule(updateThread, 86400000, false); // once every 24h
 
 	fn->fnCall(WTW_GET_MAIN_HWND_EX, reinterpret_cast<WTW_PARAM>(&hMain), NULL);
-
 	menuItem = new UpdateWndMenuItem();
 
     return 0;
@@ -76,6 +76,7 @@ int __stdcall pluginLoad(DWORD callReason, WTWFUNCTIONS* _fn) {
 int __stdcall pluginUnload(DWORD callReason) {
 	delete menuItem;
 
+	UpdateWnd::get().destroy();
 	UpdateThread::get().abort();
 	InstallThread::get().abort();
 	ThreadScheduler::get().destroyAll();

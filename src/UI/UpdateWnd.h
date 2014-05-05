@@ -12,6 +12,7 @@
 namespace wtwUpdate {
 	namespace ui {
 		class UpdateWnd {
+			HWND _hWnd;
 			//SearchBar* _searchBar;
 			AddonsTree* _tree;
 			MyRichEdit::RichEdit* _text;
@@ -71,19 +72,20 @@ namespace wtwUpdate {
 				_text->setHtml(utow(_tree->getDescription(id)).c_str());
 			}
 
-			UpdateWnd() : /*_searchBar(NULL),*/ _tree(NULL), _text(NULL) { }
+			UpdateWnd() : _hWnd(NULL), /*_searchBar(NULL),*/ _tree(NULL), _text(NULL) { }
 		public:
 			bool open(HWND hParent, HINSTANCE hInst, wtw::CJson* json) {
-				HWND hwnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_UPDATE), hParent, DlgProc);
-				if (!hwnd)
+				destroy();
+
+				_hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_UPDATE), hParent, DlgProc);
+				if (!_hWnd)
 					return false;
 
-				freeControls();
 				//_searchBar = new SearchBar(GetDlgItem(hwnd, IDC_SEARCH_BAR), NULL);
-				_tree = new AddonsTree(GetDlgItem(hwnd, IDC_TREE), json);
-				_text = new MyRichEdit::RichEdit(GetDlgItem(hwnd, IDC_TEXT));
+				_tree = new AddonsTree(GetDlgItem(_hWnd, IDC_TREE), json);
+				_text = new MyRichEdit::RichEdit(GetDlgItem(_hWnd, IDC_TEXT));
 
-				ShowWindow(hwnd, SW_SHOW);
+				ShowWindow(_hWnd, SW_SHOW);
 				return true;
 			}
 
@@ -92,8 +94,14 @@ namespace wtwUpdate {
 				return instance;
 			}
 
-			~UpdateWnd() {
+			void destroy() {
+				if (_hWnd)
+					DestroyWindow(_hWnd);
 				freeControls();
+			}
+
+			~UpdateWnd()  {
+				destroy();
 			}
 		};
 	}
