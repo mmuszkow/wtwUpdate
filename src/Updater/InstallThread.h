@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "UniqueThread.h"
-#include "../JsonObjs/Addon.h"
+#include "../JsonObjs/AddonsList.h"
 #include "../Utils/BinaryFile.h"
 #include "../Utils/Settings.h"
 #include "AddonDeleter.h"
@@ -13,8 +13,8 @@ namespace wtwUpdate {
 	namespace updater {
 		class InstallThread : public UniqueThread {
 			// it's a singleton so this is used for currently running
-			std::vector<json::Addon> _toInstall;
-			std::vector<json::Addon> _toRemove;
+			json::AddonsList _toInstall;
+			json::AddonsList _toRemove;
 
 			// TODO: in WTW cache? download buffering?
 			bool download2cache(utils::BinaryFile& f, const wchar_t* url) {
@@ -49,12 +49,24 @@ namespace wtwUpdate {
 
 				// TODO: check dependencies
 
-				// TODO: check conflicts
+				// check conflicts
+				int failed = 0;
+				std::vector<json::Addon> conflicts1 = thread->_toRemove.removeConflicted(); // this will probably never happen
+				size_t i, len = conflicts1.size();
+				failed += len;
+				for (i = 0; i < len; i++)
+					LOG_ERR(L"Addon %s conflicts with other addon", utow(conflicts1[i].getId()).c_str());
+
+				std::vector<json::Addon> conflicts2 = thread->_toInstall.removeConflicted();
+				i, len = conflicts2.size();
+				failed += len;
+				for (i = 0; i < len; i++)
+					LOG_ERR(L"Addon %s conflicts with other addon", utow(conflicts2[i].getId()).c_str());
 
 				// remove
 				wtwUtils::Settings s;
-				int removed = 0, failed = 0;
-				size_t i, len = thread->_toRemove.size();
+				i, len = thread->_toRemove.size();
+				int removed = 0;
 				for (i = 0; i < len; i++) {
 					const json::Addon& addon = thread->_toRemove[i];
 
@@ -80,6 +92,7 @@ namespace wtwUpdate {
 
 					if (addon.getState() == json::Addon::UNKNOWN) {
 						LOG_ERR(L"Unknown installation state for %s", utow(addon.getId()).c_str());
+						failed++;
 						continue;
 					}
 
@@ -117,6 +130,7 @@ namespace wtwUpdate {
 
 				notify(L"Zainstalowano %u, zaktualizowano %u, usunięto %u, błędów %u", installed, updated, removed, failed);
 				thread->_toInstall.clear();
+				thread->_toRemove.clear();
 				thread->setRunning(false);
 				return 0;
 			}
