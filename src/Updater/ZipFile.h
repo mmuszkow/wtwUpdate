@@ -2,27 +2,15 @@
 
 #include <Windows.h>
 #include "FilePath.h"
+#include "Rollbackable.h"
 #include "../Utils/Dir.h"
 #include "../../lib/zlib-1.2.8/contrib/minizip/unzip.h"
 #include "cpp/Conv.h"
 
 namespace wtwUpdate {
 	namespace updater {
-		class ZipFile {
+		class ZipFile : public Rollbackable {
 			unzFile _file;
-
-			std::vector<utils::BinaryFile> _created;
-			std::vector<utils::FileCopy> _existingCopies;
-
-			void rollback() {				
-				size_t i, len = _created.size();
-				for (i = 0; i < len; i++)
-					_created[i].del();
-				len = _existingCopies.size();
-				for (i = 0; i < len; i++)
-					_existingCopies[i].bringBack();
-
-			}
 		public:
 			ZipFile(const std::wstring& fn) {
 				_file = unzOpen(wtou(fn).c_str()); // TODO: unzOpen is utf8?
@@ -39,9 +27,6 @@ namespace wtwUpdate {
 			bool unzip() {				
 				if (!_file)
 					return false;
-
-				_created.clear();
-				_existingCopies.clear();
 
 				unz_global_info global_info;
 				if (unzGetGlobalInfo(_file, &global_info) != UNZ_OK) {
@@ -83,15 +68,12 @@ namespace wtwUpdate {
 						
 						// make a copy of existing file
 						if (utils::BinaryFile::exists(path.getPath())) {
-							utils::FileCopy copy(path.getPath());
-							if (!copy.created()) {
+							if (!addCopy(path)) {
 								LOG_ERR(L"Coping existing file %s failed", path.getPath().c_str());
 								unzCloseCurrentFile(_file);
 								rollback();
 								return false;
 							}
-
-							_existingCopies.push_back(copy);
 						}
 
 						unz_file_info info;
@@ -111,7 +93,7 @@ namespace wtwUpdate {
 							rollback();
 							return false;
 						}
-						_created.push_back(out);
+						addCreated(out);
 
 						int error = UNZ_OK;
 						do {
@@ -149,11 +131,7 @@ namespace wtwUpdate {
 					}
 				}
 
-				size_t j, len = _existingCopies.size();
-				for (j = 0; j < len; j++)
-					_existingCopies[j].del();
-				_existingCopies.clear();
-				_created.clear();
+				commit();
 
 				return true;
 			}

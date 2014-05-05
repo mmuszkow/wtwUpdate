@@ -62,10 +62,10 @@ int __stdcall pluginLoad(DWORD callReason, WTWFUNCTIONS* _fn) {
 	MyRichEdit::RichEdit::libInit();
 
 	
-	UpdateThread& updateThread = UpdateThread::get();
-	ThreadScheduler& scheduler = ThreadScheduler::get();
-	scheduler.schedule(updateThread, 300000, true); // 5 min after start
-	scheduler.schedule(updateThread, 86400000, false); // once every 24h
+	//UpdateThread& updateThread = UpdateThread::get();
+	//ThreadScheduler& scheduler = ThreadScheduler::get();
+	//scheduler.schedule(updateThread, 300000, true); // 5 min after start
+	//scheduler.schedule(updateThread, 86400000, false); // once every 24h
 
 	fn->fnCall(WTW_GET_MAIN_HWND_EX, reinterpret_cast<WTW_PARAM>(&hMain), NULL);
 	menuItem = new UpdateWndMenuItem();
@@ -77,9 +77,9 @@ int __stdcall pluginUnload(DWORD callReason) {
 	delete menuItem;
 
 	UpdateWnd::get().destroy();
+	ThreadScheduler::get().destroyAll();
 	UpdateThread::get().abort();
 	InstallThread::get().abort();
-	ThreadScheduler::get().destroyAll();
 
 	MyRichEdit::RichEdit::libDeinit();
 	fn = NULL;

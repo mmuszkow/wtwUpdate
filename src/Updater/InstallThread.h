@@ -4,6 +4,7 @@
 #include "../JsonObjs/Addon.h"
 #include "../Utils/BinaryFile.h"
 #include "../Utils/Settings.h"
+#include "AddonDeleter.h"
 #include "ZipFile.h"
 
 #include "cpp/Internet.h"
@@ -45,22 +46,42 @@ namespace wtwUpdate {
 				InstallThread* thread = static_cast<InstallThread*>(args);
 				thread->setRunning(true);
 
-				size_t toInstallLen = thread->_toInstall.size();
 
 				// TODO: check dependencies
 
 				// TODO: check conflicts
 
-				// TODO: remove
+				// remove
+				wtwUtils::Settings s;
+				int removed = 0, failed = 0;
+				size_t i, len = thread->_toRemove.size();
+				for (i = 0; i < len; i++) {
+					const json::Addon& addon = thread->_toRemove[i];
+
+					if (addon.getState() == json::Addon::INSTALLED) {
+						AddonDeleter deleter(addon);
+						deleter.del(s) ? removed++ : failed++;
+					}
+
+					if (thread->isAborted()) {
+						thread->setRunning(false);
+						return 0;
+					}
+				}
 
 				// install
-				wtwUtils::Settings s;
-				int installed = 0, updated = 0, failed = 0;
-				for (size_t i = 0; i < toInstallLen; i++) {
+				len = thread->_toInstall.size();
+				int installed = 0, updated = 0;
+				for (i = 0; i < len; i++) {
 					const json::Addon& addon = thread->_toInstall[i];
 
 					if (addon.getState() == json::Addon::INSTALLED)
 						continue;
+
+					if (addon.getState() == json::Addon::UNKNOWN) {
+						LOG_ERR(L"Unknown installation state for %s", utow(addon.getId()).c_str());
+						continue;
+					}
 
 					utils::BinaryFile f;
 					if (thread->download2cache(f, utow(addon.getZipUrl()).c_str())) {
@@ -94,7 +115,7 @@ namespace wtwUpdate {
 					}
 				}
 
-				notify(L"Zainstalowano %u, zaktualizowano %u, błędów %u", installed, updated, failed);
+				notify(L"Zainstalowano %u, zaktualizowano %u, usunięto %u, błędów %u", installed, updated, removed, failed);
 				thread->_toInstall.clear();
 				thread->setRunning(false);
 				return 0;
