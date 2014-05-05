@@ -53,7 +53,7 @@ namespace wtwUpdate {
 				// plugins directories
 				dirInfo.dirType = WTW_DIRECTORY_PROFILE;
 				if (fn->fnCall(WTW_GET_DIRECTORY_LOCATION, dirInfo, NULL) != S_OK) {
-					// TODO: log
+					LOG_ERR(L"Getting the WTW_DIRECTORY_PROFILE failed");
 					return false;
 				}
 				wchar_t tmp[512];
@@ -67,7 +67,7 @@ namespace wtwUpdate {
 				// plugins data dir
 				dirInfo.dirType = WTW_DIRECTORY_PLUGINDATA;
 				if (fn->fnCall(WTW_GET_DIRECTORY_LOCATION, dirInfo, NULL) != S_OK) {
-					// TODO: log
+					LOG_ERR(L"Getting the WTW_DIRECTORY_PLUGINDATA failed");
 					return false;
 				}
 				pathBuff[wcslen(pathBuff) - 1] = 0;
@@ -76,7 +76,7 @@ namespace wtwUpdate {
 				// theme dir
 				dirInfo.dirType = WTW_DIRECTORY_THEME;
 				if (fn->fnCall(WTW_GET_DIRECTORY_LOCATION, dirInfo, NULL) != S_OK) {
-					// TODO: log
+					LOG_ERR(L"Getting the WTW_DIRECTORY_THEME failed");
 					return false;
 				}
 				pathBuff[wcslen(pathBuff) - 1] = 0;

@@ -20,11 +20,16 @@ namespace wtwUpdate {
 				//if (_searchBar) delete _searchBar;
 				if (_tree) delete _tree;
 				if (_text) delete _text;
+				_tree = NULL;
+				_text = NULL;
 			}
 
 			static INT_PTR CALLBACK DlgProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam) {
 				switch (Msg) {
 				case WM_INITDIALOG:
+					return TRUE;
+				case WM_DESTROY:
+					UpdateWnd::get().freeControls();
 					return TRUE;
 				case WM_CTLCOLORDLG:
 				case WM_CTLCOLORBTN:
@@ -37,7 +42,7 @@ namespace wtwUpdate {
 						UpdateWnd& wnd = UpdateWnd::get();
 						// TODO: some selected to be installed/updated, some to be removed
 						updater::InstallThread& thread = updater::InstallThread::get();
-						thread.setArg(wnd._tree->getSelected(), std::vector<json::Addon>());
+						thread.setArg(wnd._tree->getSelected(), wnd._tree->getUnselected());
 						thread.start();
 						EndDialog(hDlg, NULL);
 						return TRUE;

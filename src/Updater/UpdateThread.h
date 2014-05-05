@@ -62,7 +62,7 @@ namespace wtwUpdate {
 						thread->setRunning(false);
 						return 0;		
 					}
-					if (addons[i].getInstallationState() == json::Addon::MODIFIED)
+					if (addons[i].getState() == json::Addon::MODIFIED)
 						needUpdate++;
 				}
 

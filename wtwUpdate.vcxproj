@@ -130,7 +130,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>G:\WTW\plugins\$(ProjectName)-$(Platform).plug</OutputFile>
+      <OutputFile>D:\WTW\plugins\$(ProjectName)-$(Platform).plug</OutputFile>
       <ModuleDefinitionFile>src\wtwUpdate.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>

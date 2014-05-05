@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "UniqueThread.h"
 #include "../JsonObjs/Addon.h"
 #include "../Utils/BinaryFile.h"
+#include "../Utils/Settings.h"
 #include "ZipFile.h"
 
 #include "cpp/Internet.h"
@@ -53,10 +54,12 @@ namespace wtwUpdate {
 				// TODO: remove
 
 				// install
+				wtwUtils::Settings s;
+				int installed = 0, updated = 0, failed = 0;
 				for (size_t i = 0; i < toInstallLen; i++) {
 					const json::Addon& addon = thread->_toInstall[i];
 
-					if (addon.getInstallationState() == json::Addon::INSTALLED)
+					if (addon.getState() == json::Addon::INSTALLED)
 						continue;
 
 					utils::BinaryFile f;
@@ -65,9 +68,22 @@ namespace wtwUpdate {
 						if (!zip.isValid()) {
 							std::wstring addonId = utow(addon.getId());
 							LOG_ERR(L"Zip file for %s is invalid", addonId.c_str());
+							failed++;
 						} else if (!zip.unzip()) {
 							std::wstring addonId = utow(addon.getId());
 							LOG_ERR(L"Failed to install (unzip) %s", addonId.c_str());
+							failed++;
+						} else {
+							s.setInt64(utow(addon.getId()).c_str(), addon.getTime());
+							s.write();
+							switch (addon.getState()) {
+							case json::Addon::NOT_INSTALLED:
+								installed++;
+								break;
+							case json::Addon::MODIFIED:
+								updated++;
+								break;
+							}
 						}
 						f.del();
 					}
@@ -78,6 +94,7 @@ namespace wtwUpdate {
 					}
 				}
 
+				notify(L"Zainstalowano %u, zaktualizowano %u, błędów %u", installed, updated, failed);
 				thread->_toInstall.clear();
 				thread->setRunning(false);
 				return 0;

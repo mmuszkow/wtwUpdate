@@ -76,9 +76,12 @@ int __stdcall pluginLoad(DWORD callReason, WTWFUNCTIONS* _fn) {
 int __stdcall pluginUnload(DWORD callReason) {
 	delete menuItem;
 
+	UpdateThread::get().abort();
+	InstallThread::get().abort();
 	ThreadScheduler::get().destroyAll();
 
 	MyRichEdit::RichEdit::libDeinit();
+	fn = NULL;
 
 	return 0;
 }

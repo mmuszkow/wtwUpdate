@@ -105,10 +105,10 @@ namespace wtwUpdate {
 			static LPARAM _uid;
 
 			void freeTree(TreeItem* item) {
-				//if(!item) return;
-				//freeTree(item->child);
-				//freeTree(item->next);
-				//delete item;
+				if(!item) return;
+				freeTree(item->child);
+				freeTree(item->next);
+				delete item;
 			}
 
 			TreeItem* insert(TreeItem* newOne, TreeItem* parent, bool checked = false) {
@@ -149,60 +149,56 @@ namespace wtwUpdate {
 				return NULL;
 			}
 
-			void insertJsonSection(wtw::CJson* jsonSection, TreeItem* parent) {
+			void insertJsonSection(wtw::CJson* jsonSection, TreeItem* parent, const wtwUtils::Settings& s) {
 				if (!jsonSection)
 					return;
 
 				if (jsonSection->isArray()) {
 					size_t len = jsonSection->size();
 					for (size_t i = 0; i < len; i++)
-						insertJsonSection(jsonSection->getAt(i)->find("section"), parent);
+						insertJsonSection(jsonSection->getAt(i)->find("section"), parent, s);
 				} else {
 					json::Section section(jsonSection);
 					TreeItem* newRoot = insert(new SectionNode(section), parent);
 					if (newRoot) {
-						insertJsonSection(jsonSection->find("section"), newRoot);
-						insertJsonAddon(jsonSection->find("addon"), newRoot);
+						insertJsonSection(jsonSection->find("section"), newRoot, s);
+						insertJsonAddon(jsonSection->find("addon"), newRoot, s);
 					}
 				}
 			}
 
-			void insertJsonAddon(wtw::CJson* jsonAddon, TreeItem* parent) {
+			void insertJsonAddon(wtw::CJson* jsonAddon, TreeItem* parent, const wtwUtils::Settings& s) {
 				if (!jsonAddon)
 					return;
 
 				if (jsonAddon->isArray()) {
 					size_t len = jsonAddon->size();
 					for (size_t i = 0; i < len; i++)
-						insertJsonAddon(jsonAddon->getAt(i), parent);
+						insertJsonAddon(jsonAddon->getAt(i), parent, s);
 				}				else {
 					if (parent->type == TreeItem::NODE) {
 						SectionNode* sectionNode = static_cast<SectionNode*>(parent);
 						json::Addon addon(jsonAddon, sectionNode->getSection().getDir().c_str());
+						addon.updateInstallationState(s);
 						// TODO: checkbox for installed, some other checkbox for those needing update
-						insert(new AddonLeaf(addon), parent, addon.getInstallationState() == json::Addon::INSTALLED);
+						insert(new AddonLeaf(addon), parent, addon.getState() != json::Addon::NOT_INSTALLED);
 					} else {
 						// TODO: log, addons can be only the children of the sections (excluding root)
 					}
 				}
 			}
 		public:
+			// Tree updates the addon installation status
 			AddonsTree(HWND handle, wtw::CJson* root) : Control(handle) {
 				_root = new RootNode();
 				if (!root)
 					return;
 
-				clear();
-				insertJsonSection(root, _root);
+				wtwUtils::Settings s;
+				insertJsonSection(root, _root, s);
 			}
 
 			~AddonsTree() {
-				freeTree(_root);
-			}
-
-			inline void clear() {
-				TreeView_DeleteAllItems(getHwnd());
-				_map.clear();
 				freeTree(_root);
 			}
 
@@ -223,6 +219,21 @@ namespace wtwUpdate {
 							AddonLeaf* leaf = reinterpret_cast<AddonLeaf*>(it->second);
 							ret.push_back(leaf->getAddon());
 						}
+					}
+					++it;
+				}
+				return ret;
+			}
+
+			const std::vector<json::Addon> getUnselected() const {
+				std::vector<json::Addon> ret;
+				std::map<LPARAM, TreeItem*>::const_iterator it = _map.begin(), end = _map.end();
+				while (it != end) {
+					if (it->second->type == TreeItem::LEAF) {
+						bool checked = (TreeView_GetCheckState(getHwnd(), it->second->handle) == 1);
+						AddonLeaf* leaf = reinterpret_cast<AddonLeaf*>(it->second);
+						if (!checked && leaf->getAddon().getState() != json::Addon::NOT_INSTALLED)
+							ret.push_back(leaf->getAddon());
 					}
 					++it;
 				}

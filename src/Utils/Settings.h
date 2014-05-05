@@ -6,7 +6,7 @@ namespace wtwUtils {
 
 	class Settings {
 		void*			_config;
-		
+	public:
 		Settings() {
 			wchar_t buff[MAX_PATH + 1];
 			wtwMyConfigFile configName;
@@ -21,11 +21,6 @@ namespace wtwUtils {
 			else
 				read();
 		}
-	public:
-		static Settings& get() {
-			static Settings instance;
-			return instance;
-		}
 
 		~Settings() {
 			if (_config) {
@@ -36,12 +31,12 @@ namespace wtwUtils {
 			}
 		}
 
-		inline void Settings::setInt(const wchar_t* name, int const val) {
-			if(_config) wtwSetInt(fn, _config, name, val);			
+		inline void Settings::setInt64(const wchar_t* name, __int64 const val) {
+			if (_config) wtwSetInt64(fn, _config, name, val);
 		}
 
-		inline int Settings::getInt(const wchar_t* name, int defVal) {
-			if(_config) return wtwGetInt(fn, _config, name, defVal);
+		inline __int64 Settings::getInt64(const wchar_t* name, __int64 defVal) const {
+			if(_config) return wtwGetInt64(fn, _config, name, defVal);
 			return defVal;
 		}
 

@@ -40,7 +40,7 @@
 
 #include "cpp/Conv.h"
 
-static WTWFUNCTIONS* fn;
+static WTWFUNCTIONS* fn = NULL;
 static HINSTANCE hInst;
 
 static std::wstring utow(const char* str) {
@@ -63,6 +63,28 @@ static std::string wtou(const wchar_t* str) {
 
 static std::string wtou(const std::wstring& str) {
 	return wtou(str.c_str());
+}
+
+static void notify(const wchar_t* fmt, ...) {
+	wtwTrayNotifyDef tray;
+
+	// format
+	va_list ap;
+	va_start(ap, fmt);
+	int len = _vscwprintf(fmt, ap) + 1;
+	wchar_t* msg = new wchar_t[len + 1];
+	vswprintf_s(msg, len, fmt, ap);
+	va_end(ap);
+
+	// show
+	tray.textMain = L"Aktualizacja";
+	tray.textLower = msg;
+	tray.iconId = WTW_GRAPH_ID_UPDATE;
+	tray.flags = WTW_TN_FLAG_OVERRIDE_TIME;
+	tray.showTime = 3000;
+	tray.graphType = WTW_TN_GRAPH_TYPE_SKINID;
+	fn->fnCall(WTW_SHOW_STANDARD_NOTIFY, tray, NULL);
+	delete[] msg;
 }
 
 #define LOG_ERR(fmt, ...) __LOG_F(fn, WTW_LOG_LEVEL_ERROR, MDL, fmt, __VA_ARGS__)

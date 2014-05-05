@@ -62,7 +62,7 @@ namespace wtwUpdate {
 				if (dst.size() == 0 || path.size() == 0)
 					return;
 
-				if (CopyFile(path.c_str(), dst.c_str(), TRUE) != 0) {
+				if (CopyFile(path.c_str(), dst.c_str(), FALSE) != FALSE) {
 					_origin = path;
 					_copy = dst;
 				}
