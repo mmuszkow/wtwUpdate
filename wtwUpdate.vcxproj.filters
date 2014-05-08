@@ -134,6 +134,15 @@
     <ClInclude Include="src\Utils\Dir.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\Updater\Rollbackable.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\AddonDeleter.h">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Http.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\wtwUpdate.def">

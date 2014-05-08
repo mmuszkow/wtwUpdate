@@ -105,7 +105,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>G:\WTW\plugins\$(ProjectName)-$(Platform).plug</OutputFile>
+      <OutputFile>D:\WTW\plugins\$(ProjectName)-$(Platform).plug</OutputFile>
       <ModuleDefinitionFile>src\wtwUpdate.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
@@ -153,7 +153,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>G:\WTW\plugins\$(ProjectName)-$(Platform).plug</OutputFile>
+      <OutputFile>D:\WTW\plugins\$(ProjectName)-$(Platform).plug</OutputFile>
       <ModuleDefinitionFile>src\wtwUpdate.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
@@ -181,7 +181,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>G:\WTW\plugins\$(ProjectName)-$(Platform).plug</OutputFile>
+      <OutputFile>D:\WTW\plugins\$(ProjectName)-$(Platform).plug</OutputFile>
       <ModuleDefinitionFile>src\wtwUpdate.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
@@ -227,6 +227,8 @@
     <ClInclude Include="src\ui\SearchBar.h" />
     <ClInclude Include="src\ui\UpdateWnd.h" />
     <ClInclude Include="src\UI\WtwMenuItem.h" />
+    <ClInclude Include="src\Updater\AddonDeleter.h" />
+    <ClInclude Include="src\Updater\Rollbackable.h" />
     <ClInclude Include="src\Updater\UpdateThread.h" />
     <ClInclude Include="src\Updater\FilePath.h" />
     <ClInclude Include="src\Updater\InstallThread.h" />
@@ -235,6 +237,7 @@
     <ClInclude Include="src\Updater\ZipFile.h" />
     <ClInclude Include="src\Utils\BinaryFile.h" />
     <ClInclude Include="src\Utils\Dir.h" />
+    <ClInclude Include="src\Utils\Http.h" />
     <ClInclude Include="src\Utils\Mutex.h" />
     <ClInclude Include="src\Utils\Settings.h" />
   </ItemGroup>

@@ -36,9 +36,11 @@ namespace wtwUpdate {
 					}
 				} else {
 					wtw::CJson* newSection = json->find("section");
-					std::string dir = newSection->find("dir")->c_str();
-					recSection(newSection, dir, s);
-					recAddon(json->find("addon"), dir, s);
+					std::string newDir = newSection->find("dir")->c_str();
+					if (newDir.size() == 0)
+						newDir = dir;
+					recSection(newSection, newDir, s);
+					recAddon(json->find("addon"), newDir, s);
 				}
 			}
 		public:
@@ -51,8 +53,6 @@ namespace wtwUpdate {
 			}
 
 			AddonsList(const std::vector<json::Addon>& list) : std::vector<json::Addon>(list) {	}
-
-
 
 			std::vector<json::Addon> removeConflicted() {
 				std::vector<json::Addon> ret;
