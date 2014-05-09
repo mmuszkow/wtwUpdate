@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "stdinc.h"
 #include "InstallThread.hpp"
@@ -13,7 +13,6 @@ namespace wtwUpdate {
 		DWORD InstallThread::proc(LPVOID args) {
 			InstallThread* thread = static_cast<InstallThread*>(args);
 			thread->setRunning(true);
-
 
 			// TODO: check dependencies
 
@@ -102,7 +101,7 @@ namespace wtwUpdate {
 				}
 			}
 
-			notify(L"Zainstalowano %u, zaktualizowano %u, usuniêto %u, b³êdów %u", installed, updated, removed, failed);
+			notify(L"Zainstalowano %u, zaktualizowano %u, usuniÄ™to %u, bÅ‚Ä™dÃ³w %u", installed, updated, removed, failed);
 			thread->_toInstall.clear();
 			thread->_toRemove.clear();
 			thread->setRunning(false);

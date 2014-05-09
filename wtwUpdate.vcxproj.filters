@@ -120,6 +120,9 @@
     <ClCompile Include="src\Updater\UniqueThread.cpp">
       <Filter>Source Files\Updater</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\Http.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\resource.h">

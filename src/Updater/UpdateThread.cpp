@@ -5,6 +5,7 @@
 #include "UI/UpdateWnd.hpp"
 #include "JsonObjs/AddonsList.hpp"
 #include "Utils/Http.hpp"
+#include "libWTW-src/libJSON/jansson.h"
 
 namespace wtwUpdate {
 	namespace updater {
