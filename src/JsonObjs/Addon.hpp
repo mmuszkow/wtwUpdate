@@ -9,7 +9,7 @@ namespace wtwUpdate {
 	namespace json {
 		class Addon : public Obj {
 		public:
-			enum InstallationState { UNKNOWN, NOT_INSTALLED, INSTALLED, MODIFIED };
+			enum InstallationState { NOT_INSTALLED, INSTALLED, MODIFIED };
 		private:
 			std::string _id;
 			std::string _name;

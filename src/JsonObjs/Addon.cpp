@@ -14,7 +14,7 @@ namespace wtwUpdate {
 
 		Addon::Addon() {
 			_time = _size = 0;
-			_installationState = UNKNOWN;
+			_installationState = NOT_INSTALLED;
 		}
 
 		Addon::Addon(wtw::CJson* json, const std::string& dir) : Obj(json) {
@@ -31,7 +31,7 @@ namespace wtwUpdate {
 			char zipUrl[1024];
 			sprintf_s(zipUrl, 1024, "%s/%s-%u.zip", dir.c_str(), _id.c_str(), _time);
 			_zipUrl = zipUrl;
-			_installationState = UNKNOWN;
+			_installationState = NOT_INSTALLED;
 		}
 
 		void Addon::updateInstallationState(const wtwUtils::Settings& s) {

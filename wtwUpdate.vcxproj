@@ -248,16 +248,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdinc.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\UI\AddonsTree.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdinc.h</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdinc.h</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdinc.h</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdinc.h</PrecompiledHeaderFile>
-    </ClCompile>
+    <ClCompile Include="src\UI\Bitmap.cpp" />
     <ClCompile Include="src\UI\RichEdit\FastStrBuff.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdinc.h</PrecompiledHeaderFile>
@@ -288,6 +279,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdinc.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\UI\Tree\AddonsTree.cpp" />
+    <ClCompile Include="src\UI\Tree\ImageList.cpp" />
     <ClCompile Include="src\UI\UpdateWnd.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdinc.h</PrecompiledHeaderFile>
@@ -364,6 +357,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdinc.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClInclude Include="src\UI\Bitmap.hpp" />
+    <ClInclude Include="src\UI\BitmapList.hpp" />
+    <ClInclude Include="src\UI\Tree\AddonLeaf.hpp" />
+    <ClInclude Include="src\UI\Tree\AddonsTree.hpp" />
+    <ClInclude Include="src\UI\Tree\ImageList.hpp" />
+    <ClInclude Include="src\UI\Tree\RootNode.h" />
+    <ClInclude Include="src\UI\Tree\SectionNode.hpp" />
+    <ClInclude Include="src\UI\Tree\TreeItem.hpp" />
     <ClInclude Include="src\Utils\FileCopy.hpp">
       <FileType>CppCode</FileType>
     </ClInclude>
@@ -388,7 +389,6 @@
     <ClInclude Include="src\JsonObjs\Section.hpp" />
     <ClInclude Include="src\resource.h" />
     <ClInclude Include="src\stdinc.h" />
-    <ClInclude Include="src\ui\AddonsTree.hpp" />
     <ClInclude Include="src\ui\Control.hpp" />
     <ClInclude Include="src\UI\RichEdit\FastStrBuff.hpp" />
     <ClInclude Include="src\UI\RichEdit\ImageDataObject.hpp" />

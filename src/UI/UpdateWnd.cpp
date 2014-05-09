@@ -43,12 +43,21 @@ namespace wtwUpdate {
 					return TRUE;
 				}
 				return FALSE;
+			case WM_LBUTTONUP:
+				UpdateWnd::get()._tree->check();
+				return FALSE;
+			// TODO: move this to AddonsTree
 			case WM_NOTIFY:
-				if (((LPNMHDR)lParam)->code == TVN_SELCHANGED) {
-					LPNMTREEVIEW pnmtv = reinterpret_cast<LPNMTREEVIEW>(lParam);
-					LPARAM id = pnmtv->itemNew.lParam;
-					UpdateWnd::get().selectHandler(id);
-					return 0;
+				if (wParam == IDC_TREE) {
+					LPNMHDR lpnmh = reinterpret_cast<LPNMHDR>(lParam);
+					if (lpnmh->code == TVN_SELCHANGED) {
+						LPNMTREEVIEW pnmtv = reinterpret_cast<LPNMTREEVIEW>(lParam);
+						LPARAM id = pnmtv->itemNew.lParam;
+						UpdateWnd::get().selectHandler(id);
+						return 0;
+					} else if (lpnmh->code == NM_CLICK) {
+						UpdateWnd::get()._tree->check();
+					}
 				}
 				return FALSE;
 			default: return FALSE;
@@ -70,7 +79,7 @@ namespace wtwUpdate {
 				return false;
 
 			//_searchBar = new SearchBar(GetDlgItem(hwnd, IDC_SEARCH_BAR), NULL);
-			_tree = new AddonsTree(GetDlgItem(_hWnd, IDC_TREE), json);
+			_tree = new tree::AddonsTree(GetDlgItem(_hWnd, IDC_TREE), json);
 			_text = new MyRichEdit::RichEdit(GetDlgItem(_hWnd, IDC_TEXT));
 
 			ShowWindow(_hWnd, SW_SHOW);

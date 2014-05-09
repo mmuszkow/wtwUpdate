@@ -84,9 +84,6 @@
     <ClCompile Include="src\Utils\Settings.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\UI\AddonsTree.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
     <ClCompile Include="src\UI\UpdateWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -122,6 +119,15 @@
     </ClCompile>
     <ClCompile Include="src\Utils\Http.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Tree\AddonsTree.cpp">
+      <Filter>Source Files\UI\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Tree\ImageList.cpp">
+      <Filter>Source Files\UI\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Bitmap.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -163,9 +169,6 @@
     </ClInclude>
     <ClInclude Include="src\Utils\Settings.hpp">
       <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ui\AddonsTree.hpp">
-      <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\Control.hpp">
       <Filter>Header Files\UI</Filter>
@@ -214,6 +217,30 @@
     </ClInclude>
     <ClInclude Include="src\Updater\UpdateThread.hpp">
       <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Tree\AddonLeaf.hpp">
+      <Filter>Header Files\UI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Tree\AddonsTree.hpp">
+      <Filter>Header Files\UI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Tree\ImageList.hpp">
+      <Filter>Header Files\UI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Tree\SectionNode.hpp">
+      <Filter>Header Files\UI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Tree\TreeItem.hpp">
+      <Filter>Header Files\UI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Tree\RootNode.h">
+      <Filter>Header Files\UI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Bitmap.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\BitmapList.hpp">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

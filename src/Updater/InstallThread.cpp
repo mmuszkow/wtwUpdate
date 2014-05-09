@@ -57,12 +57,6 @@ namespace wtwUpdate {
 				if (addon.getState() == json::Addon::INSTALLED)
 					continue;
 
-				if (addon.getState() == json::Addon::UNKNOWN) {
-					LOG_ERR(L"Unknown installation state for %s", utow(addon.getId()).c_str());
-					failed++;
-					continue;
-				}
-
 				utils::BinaryFile f;
 				utils::Http http;
 				if (http.download2file(utow(addon.getZipUrl()).c_str(), &f)) {

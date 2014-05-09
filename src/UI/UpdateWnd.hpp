@@ -1,7 +1,7 @@
 #pragma once
 
 //#include "SearchBar.hpp"
-#include "AddonsTree.hpp"
+#include "Tree/AddonsTree.hpp"
 #include "RichEdit/RichEdit.hpp"
 #include "cpp/Json.h"
 
@@ -10,7 +10,7 @@ namespace wtwUpdate {
 		class UpdateWnd {
 			HWND _hWnd;
 			//SearchBar* _searchBar;
-			AddonsTree* _tree;
+			tree::AddonsTree* _tree;
 			MyRichEdit::RichEdit* _text;
 
 			void freeControls();

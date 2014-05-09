@@ -4,6 +4,7 @@
 
 namespace wtwUpdate {
 	namespace updater {
+		std::wstring FilePath::_profileDir;
 		std::wstring FilePath::_plugins32Dir;
 		std::wstring FilePath::_plugins64Dir;
 		std::wstring FilePath::_pluginDataDir;
@@ -31,6 +32,7 @@ namespace wtwUpdate {
 			replace(_path, L"__LANG__", _langDir);
 			replace(_path, L"__LIBS32__", _libs32Dir);
 			replace(_path, L"__LIBS64__", _libs64Dir);
+			replace(_path, L"__PROFILE__", _profileDir);			
 
 			std::replace(_path.begin(), _path.end(), L'/', L'\\');
 		}
@@ -44,12 +46,15 @@ namespace wtwUpdate {
 			dirInfo.bi.bufferSize = MAX_PATH;
 			dirInfo.bi.pBuffer = pathBuff;
 
-			// plugins directories
+			// profile dir
 			dirInfo.dirType = WTW_DIRECTORY_PROFILE;
 			if (FAILED(fn->fnCall(WTW_GET_DIRECTORY_LOCATION, dirInfo, NULL))) {
 				LOG_ERR(L"Getting the WTW_DIRECTORY_PROFILE failed");
 				return false;
 			}
+			_profileDir = pathBuff;
+
+			// plugins, libs and lang dir
 			wchar_t tmp[512];
 			swprintf_s(tmp, 512, L"%sPlugins32", pathBuff);
 			_plugins32Dir = tmp;
@@ -62,7 +67,6 @@ namespace wtwUpdate {
 			swprintf_s(tmp, 512, L"%sI18N", pathBuff);
 			_langDir = tmp;
 
-
 			// plugins data dir
 			dirInfo.dirType = WTW_DIRECTORY_PLUGINDATA;
 			if (FAILED(fn->fnCall(WTW_GET_DIRECTORY_LOCATION, dirInfo, NULL))) {
@@ -72,7 +76,7 @@ namespace wtwUpdate {
 			pathBuff[wcslen(pathBuff) - 1] = 0;
 			_pluginDataDir = pathBuff;
 
-			// theme dir
+			// user theme dir
 			dirInfo.dirType = WTW_DIRECTORY_USERTHEME;
 			if (FAILED(fn->fnCall(WTW_GET_DIRECTORY_LOCATION, dirInfo, NULL))) {
 				LOG_ERR(L"Getting the WTW_DIRECTORY_USERTHEME failed");
