@@ -1,9 +1,8 @@
-#include <Windows.h>
+#include "stdinc.h"
+#include "RichEdit.hpp"
 #include <Commctrl.h>
 #include <GdiPlus.h>
-
-#include "RichEdit.h"
-#include "FastStrBuff.h"
+#include "FastStrBuff.hpp"
 
 namespace MyRichEdit {
 	HMODULE		RichEdit::_hRichEditLib = NULL;
@@ -56,15 +55,15 @@ namespace MyRichEdit {
 	void RichEdit::handleImg(std::wstring tag) {
 #ifndef MY_RICHEDIT_NO_OLE
 		if(!_pRichEditOle)
-			return addText(L" [Obrazek] ");
+			return addText(L" [img] ");
 		
 		size_t srcStart = tag.find(L"src=\"");
 		if(srcStart == std::wstring::npos)
-			return addText(L" [Obrazek] ");
+			return addText(L" [img] ");
 		
 		size_t srcEnd = tag.find(L'\"', srcStart+5);
 		if(srcEnd == std::wstring::npos)
-			return addText(L" [Obrazek] ");
+			return addText(L" [img] ");
 
 		std::wstring imgPath = tag.substr(srcStart+5, srcEnd-srcStart-5);
 		SendMessage(getHwnd(), EM_SETSEL, 0xFFFFFFF, 0xFFFFFFF);
@@ -72,7 +71,7 @@ namespace MyRichEdit {
 		Gdiplus::GpBitmap* image;
 		Gdiplus::DllExports::GdipCreateBitmapFromFile(imgPath.c_str(), &image);
 		if(!image)
-			return addText(L" [Obrazek] ");
+			return addText(L" [img] ");
 		HBITMAP hImg;
 		Gdiplus::DllExports::GdipCreateHBITMAPFromBitmap(image, &hImg, 0xFFFFFFFF);
 		if(hImg) {
@@ -81,7 +80,7 @@ namespace MyRichEdit {
 		}
 		Gdiplus::DllExports::GdipDisposeImage(image);
 #else
-		return addText(L" [Obrazek] ");
+		return addText(L" [img] ");
 #endif
 	}
 

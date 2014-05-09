@@ -1,8 +1,9 @@
-#include "BinaryFile.h"
+#include "stdinc.h"
+#include "BinaryFile.hpp"
 
 namespace wtwUpdate {
 	namespace utils {		
-		boolean BinaryFile::exists(const std::wstring& path) {
+		bool BinaryFile::exists(const std::wstring& path) {
 			BinaryFile tmp;
 			if (!tmp.open(path, L"rb"))
 				return false;
@@ -62,6 +63,28 @@ namespace wtwUpdate {
 			if (!_f)
 				return false;
 			return (fwrite(buff, 1, len, _f) == len);
+		}
+
+		FILETIME BinaryFile::dos2ft(unsigned long unix) {
+			__int64 t = Int32x32To64(unix, 10000000) + 116444736000000000;
+			FILETIME ft;
+			ft.dwHighDateTime = (t >> 32) & 0xFFFFFFFF;
+			ft.dwLowDateTime = t & 0xFFFFFFFF;
+			return ft;
+		}
+
+		bool BinaryFile::setModTime(unsigned long dosTime) {
+			FILETIME modTime;
+			if (DosDateTimeToFileTime((dosTime >> 16) & 0xFFFF, dosTime & 0xFFFF, &modTime) != TRUE)
+				return false;
+
+			HANDLE hFile = CreateFile(_path.c_str(), FILE_WRITE_ATTRIBUTES, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+			if (hFile == INVALID_HANDLE_VALUE)
+				return false;
+
+			bool ret = (SetFileTime(hFile, NULL, NULL, &modTime) == TRUE);
+			CloseHandle(hFile);
+			return ret;
 		}
 	}
 }

@@ -25,34 +25,100 @@
     <Filter Include="Header Files\UI\RichEdit">
       <UniqueIdentifier>{7b7561d4-5e91-425a-b635-4f3619d8f2ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RichEdit">
-      <UniqueIdentifier>{5cb8916b-3681-4003-8955-2e8bfbdf2147}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Utils">
       <UniqueIdentifier>{52fe1b73-ff02-4a66-b641-5da5b07dda3f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Utils">
       <UniqueIdentifier>{86ae3449-375f-4629-acb5-33c8f0ea63ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\JsonObjs">
+      <UniqueIdentifier>{adbb822d-f802-442d-9907-87aefcebc218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{c3845681-5161-4127-b3c2-9b60a64fa095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\RichEdit">
+      <UniqueIdentifier>{5cb8916b-3681-4003-8955-2e8bfbdf2147}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Updater">
+      <UniqueIdentifier>{bbfa2cca-277a-4246-a1f9-effa63e3db4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\Tree">
+      <UniqueIdentifier>{b016a08d-aca9-498e-a69a-aef7aafbd273}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\Tree">
+      <UniqueIdentifier>{00948324-7c0d-4ae4-85d9-33ff093a55c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\plugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\stdinc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\RichEdit\FastStrBuff.cpp">
-      <Filter>Source Files\RichEdit</Filter>
+      <Filter>Source Files\UI\RichEdit</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\RichEdit\ImageDataObject.cpp">
-      <Filter>Source Files\RichEdit</Filter>
+      <Filter>Source Files\UI\RichEdit</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\RichEdit\RichEdit.cpp">
-      <Filter>Source Files\RichEdit</Filter>
+      <Filter>Source Files\UI\RichEdit</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils\BinaryFile.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JsonObjs\Addon.cpp">
+      <Filter>Source Files\JsonObjs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JsonObjs\AddonsList.cpp">
+      <Filter>Source Files\JsonObjs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JsonObjs\Obj.cpp">
+      <Filter>Source Files\JsonObjs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\Dir.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\FileCopy.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\Settings.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\AddonsTree.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\UpdateWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\wtwMenuItem.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\FilePath.cpp">
+      <Filter>Source Files\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\ZipFile.cpp">
+      <Filter>Source Files\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\AddonDeleter.cpp">
+      <Filter>Source Files\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\Rollbackable.cpp">
+      <Filter>Source Files\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\UpdateThread.cpp">
+      <Filter>Source Files\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\InstallThread.cpp">
+      <Filter>Source Files\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\ThreadScheduler.cpp">
+      <Filter>Source Files\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\UniqueThread.cpp">
+      <Filter>Source Files\Updater</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,86 +128,89 @@
     <ClInclude Include="src\stdinc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\JsonObjs\Rev.h">
+    <ClInclude Include="src\JsonObjs\Addon.hpp">
       <Filter>Header Files\JsonObjs</Filter>
     </ClInclude>
-    <ClInclude Include="src\JsonObjs\File.h">
+    <ClInclude Include="src\JsonObjs\AddonsList.hpp">
       <Filter>Header Files\JsonObjs</Filter>
     </ClInclude>
-    <ClInclude Include="src\JsonObjs\Obj.h">
+    <ClInclude Include="src\JsonObjs\File.hpp">
       <Filter>Header Files\JsonObjs</Filter>
     </ClInclude>
-    <ClInclude Include="src\JsonObjs\Addon.h">
+    <ClInclude Include="src\JsonObjs\Obj.hpp">
       <Filter>Header Files\JsonObjs</Filter>
     </ClInclude>
-    <ClInclude Include="src\JsonObjs\Section.h">
+    <ClInclude Include="src\JsonObjs\Rev.hpp">
       <Filter>Header Files\JsonObjs</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\Control.h">
+    <ClInclude Include="src\JsonObjs\Section.hpp">
+      <Filter>Header Files\JsonObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\BinaryFile.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Dir.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Http.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Mutex.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Settings.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\AddonsTree.hpp">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\AddonsTree.h">
+    <ClInclude Include="src\ui\Control.hpp">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\SearchBar.h">
+    <ClInclude Include="src\ui\SearchBar.hpp">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\UpdateWnd.h">
+    <ClInclude Include="src\ui\UpdateWnd.hpp">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\Updater\FilePath.h">
-      <Filter>Header Files\Updater</Filter>
+    <ClInclude Include="src\UI\WtwMenuItem.hpp">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\Updater\InstallThread.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Updater\ZipFile.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Updater\UniqueThread.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Updater\ThreadScheduler.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Updater\UpdateThread.h">
-      <Filter>Header Files\Updater</Filter>
-    </ClInclude>
-    <ClInclude Include="src\JsonObjs\AddonsList.h">
-      <Filter>Header Files\JsonObjs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\UI\RichEdit\FastStrBuff.h">
+    <ClInclude Include="src\UI\RichEdit\FastStrBuff.hpp">
       <Filter>Header Files\UI\RichEdit</Filter>
     </ClInclude>
-    <ClInclude Include="src\UI\RichEdit\ImageDataObject.h">
+    <ClInclude Include="src\UI\RichEdit\ImageDataObject.hpp">
       <Filter>Header Files\UI\RichEdit</Filter>
     </ClInclude>
-    <ClInclude Include="src\UI\RichEdit\RichEdit.h">
+    <ClInclude Include="src\UI\RichEdit\RichEdit.hpp">
       <Filter>Header Files\UI\RichEdit</Filter>
     </ClInclude>
-    <ClInclude Include="src\UI\WtwMenuItem.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils\Mutex.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils\Settings.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils\BinaryFile.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils\Dir.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Updater\Rollbackable.h">
+    <ClInclude Include="src\Updater\ZipFile.hpp">
       <Filter>Header Files\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="src\Updater\AddonDeleter.h">
+    <ClInclude Include="src\Updater\FilePath.hpp">
       <Filter>Header Files\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="src\Utils\Http.h">
+    <ClInclude Include="src\Utils\FileCopy.hpp">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\AddonDeleter.hpp">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\InstallThread.hpp">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\Rollbackable.hpp">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\ThreadScheduler.hpp">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\UniqueThread.hpp">
+      <Filter>Header Files\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\UpdateThread.hpp">
+      <Filter>Header Files\Updater</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

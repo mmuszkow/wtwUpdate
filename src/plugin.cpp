@@ -1,9 +1,11 @@
 ﻿#include "stdinc.h"
-#include "UI/RichEdit/RichEdit.h"
-#include "UI/UpdateWnd.h"
-#include "UI/WtwMenuItem.h"
-#include "Updater/UpdateThread.h"
-#include "Updater/ThreadScheduler.h"
+#include "UI/RichEdit/RichEdit.hpp"
+#include "UI/UpdateWnd.hpp"
+#include "UI/WtwMenuItem.hpp"
+#include "Updater/InstallThread.hpp"
+#include "Updater/UpdateThread.hpp"
+#include "Updater/ThreadScheduler.hpp"
+#include "Updater/FilePath.hpp"
 
 WTWPLUGINFO plugInfo = {
 	sizeof(WTWPLUGINFO),						// rozmiar struktury
@@ -23,8 +25,6 @@ WTWPLUGINFO plugInfo = {
 	0, 0, 0, 0									// zarezerwowane (4 pola)
 };
 
-HWND hMain = NULL;
-
 using namespace wtwUpdate::ui;
 using namespace wtwUpdate::updater;
 
@@ -43,7 +43,8 @@ class UpdateWndMenuItem : public WtwMenuItem {
 	static WTW_PTR wtwMenuClickFunc(WTW_PARAM, WTW_PARAM, void* cData) {
 		wtw::CJson* json = UpdateThread::get().downloadJson(L"http://muh.cba.pl/central.json");
 		UpdateWnd::get().open(hMain, hInst, json);
-		wtw::CJson::decref(json);
+		if (json)
+			wtw::CJson::decref(json);
 		return 0;
 	}
 public:

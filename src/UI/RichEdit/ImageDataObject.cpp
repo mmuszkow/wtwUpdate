@@ -1,4 +1,5 @@
-#include "ImageDataObject.h"
+#include "stdinc.h"
+#include "ImageDataObject.hpp"
 
 #ifndef MY_RICHEDIT_NO_OLE
 #include <assert.h>

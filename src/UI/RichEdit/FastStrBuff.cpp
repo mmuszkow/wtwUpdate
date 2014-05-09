@@ -1,6 +1,5 @@
-#pragma once
-
-#include "FastStrBuff.h"
+#include "stdinc.h"
+#include "FastStrBuff.hpp"
 
 namespace MyRichEdit {
 	FastStrBuff::FastStrBuff() {

@@ -25,6 +25,8 @@
 
 #pragma comment (lib, "Comctl32.lib")
 #pragma comment (lib, "Gdiplus.lib")
+#pragma comment (lib, "Wininet.lib")
+
 
 #ifdef _M_IX86
 #pragma comment (lib, "../API/libs/lib/libWTW_Release_Win32_libWTW.lib")
@@ -40,8 +42,9 @@
 
 #include "cpp/Conv.h"
 
-static WTWFUNCTIONS* fn = NULL;
-static HINSTANCE hInst;
+extern WTWFUNCTIONS* fn;
+extern HINSTANCE hInst;
+extern HWND hMain;
 
 static std::wstring utow(const char* str) {
 	wchar_t* w = wtw::CConv::utow(str);
