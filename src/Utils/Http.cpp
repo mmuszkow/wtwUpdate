@@ -6,7 +6,7 @@ namespace wtwUpdate {
 	namespace utils {
 		////////////////// HttpUrl //////////////////
 
-		Http::HttpUrl::HttpUrl(const std::wstring& url) {
+		Http::Url::Url(const std::wstring& url) {
 			size_t			pos;
 			std::wstring	str(url);
 
@@ -143,7 +143,7 @@ namespace wtwUpdate {
 		}
 
 		bool Http::download(const std::wstring& urlStr, pDownloadHandler handler, void* handlerData) {
-			HttpUrl url(urlStr);
+			Url url(urlStr);
 
 			if (!_hConnect && !connect(url.getHost(), url.getPort()))
 				return false;

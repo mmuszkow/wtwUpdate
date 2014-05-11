@@ -8,13 +8,13 @@ namespace wtwUpdate {
 	namespace utils {
 		/// HTTP or HTTPS connection.
 		class Http {
-			class HttpUrl {
+			class Url {
 				std::wstring _host;
 				int _port;
 				std::wstring _object;
 				bool _ssl;
 			public:
-				HttpUrl(const std::wstring& url);
+				Url(const std::wstring& url);
 
 				inline std::wstring getHost() const {
 					return _host;
