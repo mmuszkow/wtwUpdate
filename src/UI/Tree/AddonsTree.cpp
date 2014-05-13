@@ -11,25 +11,33 @@ namespace wtwUpdate {
 
 			// Tree updates the addon installation status
 			AddonsTree::AddonsTree(HWND handle, wtw::CJson* root) : Control(handle) {
-				BitmapList images;
-				images.add(L"wtwUpdate/unchecked", L"wtwUpdateUnchecked.png", IDB_UNCHECKED);
-				images.add(L"wtwUpdate/checked", L"wtwUpdateChecked.png", IDB_CHECKED);
-				images.add(L"wtwUpdate/modified", L"wtwUpdateModified.png", IDB_MODIFIED);
-				_imgList = new ImageList(images, 13, 13);
-				TreeView_SetImageList(handle, _imgList->getHandle(), TVSIL_NORMAL);
-				images.releaseAll();
-
+				initImages();
 				_root = new RootNode();
-				if (!root)
-					return;
-
 				wtwUtils::Settings s;
 				insertJsonSection(root, _root, s);
+			}
+
+			// Tree updates the addon installation status
+			AddonsTree::AddonsTree(HWND handle, bds_node* root) : Control(handle) {
+				initImages();
+				_root = new RootNode();
+				wtwUtils::Settings s;
+				insertBsonSection(root, _root, s);
 			}
 
 			AddonsTree::~AddonsTree() {
 				freeTree(_root);
 				delete _imgList;
+			}
+
+			void AddonsTree::initImages() {
+				BitmapList images;
+				images.add(L"wtwUpdate/unchecked", L"wtwUpdateUnchecked.png", IDB_UNCHECKED);
+				images.add(L"wtwUpdate/checked", L"wtwUpdateChecked.png", IDB_CHECKED);
+				images.add(L"wtwUpdate/modified", L"wtwUpdateModified.png", IDB_MODIFIED);
+				_imgList = new ImageList(images, 13, 13);
+				TreeView_SetImageList(getHwnd(), _imgList->getHandle(), TVSIL_NORMAL);
+				images.releaseAll();
 			}
 
 			void AddonsTree::freeTree(TreeItem* item) {
@@ -109,12 +117,51 @@ namespace wtwUpdate {
 						SectionNode* sectionNode = static_cast<SectionNode*>(parent);
 						json::Addon addon(jsonAddon, sectionNode->getSection().getDir().c_str());
 						addon.updateInstallationState(s);
-						// TODO: checkbox for installed, some other checkbox for those needing update
 						insert(new AddonLeaf(addon), parent, addon.getState());
 					}
 					else {
 						// TODO: log, addons can be only the children of the sections (excluding root)
 					}
+				}
+			}
+
+			void AddonsTree::insertBsonSection(bds_node* bsonSection, TreeItem* parent, const wtwUtils::Settings& s) {
+				switch (bdf_elem_type(bsonSection)) {
+				case E_DOC: {
+					json::Section section(bsonSection);
+					TreeItem* newRoot = insert(new SectionNode(section), parent, json::Addon::NOT_INSTALLED);
+					if (newRoot) {
+						insertBsonSection(bdf_elem_child(bsonSection, "section"), newRoot, s);
+						insertBsonAddon(bdf_elem_child(bsonSection, "addon"), newRoot, s);
+					}
+					break;
+				}
+				case E_ARRAY:
+					bsonSection = bsonSection->elem.data.node;
+					while (bsonSection) {
+						insertBsonSection(bdf_elem_child(bsonSection, "section"), parent, s);
+						bsonSection = bsonSection->next;
+					}
+					break;
+				}
+			}
+
+			void AddonsTree::insertBsonAddon(bds_node* bsonAddon, TreeItem* parent, const wtwUtils::Settings& s) {
+				switch (bdf_elem_type(bsonAddon)) {
+				case E_DOC: {
+					SectionNode* sectionNode = static_cast<SectionNode*>(parent);
+					json::Addon addon(bsonAddon, sectionNode->getSection().getDir().c_str());
+					addon.updateInstallationState(s);
+					insert(new AddonLeaf(addon), parent, addon.getState());
+					break;
+				}
+				case E_ARRAY:
+					bsonAddon = bsonAddon->elem.data.node;
+					while (bsonAddon) {
+						insertBsonAddon(bsonAddon, parent, s);
+						bsonAddon = bsonAddon->next;
+					}
+					break;
 				}
 			}
 

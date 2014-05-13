@@ -17,7 +17,7 @@ namespace wtwUpdate {
 			_installationState = NOT_INSTALLED;
 		}
 
-		Addon::Addon(wtw::CJson* json, const std::string& dir) : Obj(json) {
+		void Addon::init(const std::string& dir) {
 			_id = getStr("id");
 			_name = getStr("name");
 			_author = getStr("author");

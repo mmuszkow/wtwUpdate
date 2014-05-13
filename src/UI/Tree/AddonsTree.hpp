@@ -17,10 +17,14 @@ namespace wtwUpdate {
 				TreeItem* insert(TreeItem* newOne, TreeItem* parent, json::Addon::InstallationState state);
 				void insertJsonSection(wtw::CJson* jsonSection, TreeItem* parent, const wtwUtils::Settings& s);
 				void insertJsonAddon(wtw::CJson* jsonAddon, TreeItem* parent, const wtwUtils::Settings& s);
+				void insertBsonSection(bds_node* bsonSection, TreeItem* parent, const wtwUtils::Settings& s);
+				void insertBsonAddon(bds_node* bsonAddon, TreeItem* parent, const wtwUtils::Settings& s);
+				void initImages();
 				void freeTree(TreeItem* item);
 			public:
 				// Tree updates the addon installation status
 				AddonsTree(HWND handle, wtw::CJson* root);
+				AddonsTree(HWND handle, bds_node* root);
 				~AddonsTree();
 
 				void check() {

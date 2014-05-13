@@ -25,9 +25,18 @@ namespace wtwUpdate {
 			InstallationState _installationState;
 
 			static __int64 ft2unix(const FILETIME& ft);
+
+			void init(const std::string& dir);
 		public:
 			Addon();
-			Addon(wtw::CJson* json, const std::string& dir);
+
+			Addon(bds_node* bson, const std::string& dir) : Obj(bson) {
+				init(dir);
+			}
+
+			Addon::Addon(wtw::CJson* json, const std::string& dir) : Obj(json) {
+				init(dir);
+			}
 
 			inline const std::string& getId() const {
 				return _id;

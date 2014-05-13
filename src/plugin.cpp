@@ -41,10 +41,19 @@ WTWPLUGINFO* __stdcall queryPlugInfo(DWORD apiVersion, DWORD masterVersion) {
 
 class UpdateWndMenuItem : public WtwMenuItem {
 	static WTW_PTR wtwMenuClickFunc(WTW_PARAM, WTW_PARAM, void* cData) {
-		wtw::CJson* json = UpdateThread::get().downloadJson(L"http://muh.cba.pl/central.json");
+		/*wtw::CJson* json = UpdateThread::get().downloadJson(L"http://wtw-addons.cba.pl/central.json");
 		UpdateWnd::get().open(hMain, hInst, json);
 		if (json)
-			wtw::CJson::decref(json);
+			wtw::CJson::decref(json);*/
+
+		bds_strings_map* map = bdf_strings_map_create(8192);
+		bds_node* bson = UpdateThread::get().downloadBson(L"http://wtw-addons.cba.pl/central.bson");
+		if (bson) {
+			UpdateWnd::get().open<bds_node*>(hMain, hInst, bson);
+			bdf_node_destroy(bson, false);
+		}
+		bdf_strings_map_destroy(map);
+
 		return 0;
 	}
 public:

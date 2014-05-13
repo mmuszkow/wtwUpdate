@@ -8,13 +8,21 @@ namespace wtwUpdate {
 			std::string _title;
 			std::string _desc;
 			std::string _dir;
-		public:
-			Section() {	}
 
-			Section(wtw::CJson* json) : Obj(json) {
+			void init() {
 				_title = getStr("title");
 				_desc = getStr("desc");
 				_dir = getStr("dir");
+			}
+		public:
+			Section() {	}
+
+			Section(bds_node* bson) : Obj(bson) {
+				init();
+			}
+
+			Section(wtw::CJson* json) : Obj(json) {
+				init();
 			}
 
 			inline const std::string& getTitle() const {

@@ -20,9 +20,25 @@ namespace wtwUpdate {
 			void selectHandler(LPARAM id);
 
 			UpdateWnd();
+
+			bool init();
 		public:
 			~UpdateWnd();
-			bool open(HWND hParent, HINSTANCE hInst, wtw::CJson* json);
+
+			template<class T> bool open(HWND hParent, HINSTANCE hInst, T data) { // problems when in .cpp
+				destroy();
+
+				_hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_UPDATE), hParent, DlgProc);
+				if (!_hWnd)
+					return false;
+
+				//_searchBar = new SearchBar(GetDlgItem(hwnd, IDC_SEARCH_BAR), NULL);
+				_tree = new tree::AddonsTree(GetDlgItem(_hWnd, IDC_TREE), data);
+				_text = new MyRichEdit::RichEdit(GetDlgItem(_hWnd, IDC_TEXT));
+
+				ShowWindow(_hWnd, SW_SHOW);
+				return true;
+			}
 
 			static UpdateWnd& get() {
 				static UpdateWnd instance;

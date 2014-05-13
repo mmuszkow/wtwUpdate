@@ -71,21 +71,6 @@ namespace wtwUpdate {
 			_text->setHtml(utow(_tree->getDescription(id)).c_str());
 		}
 
-		bool UpdateWnd::open(HWND hParent, HINSTANCE hInst, wtw::CJson* json) {
-			destroy();
-
-			_hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_UPDATE), hParent, DlgProc);
-			if (!_hWnd)
-				return false;
-
-			//_searchBar = new SearchBar(GetDlgItem(hwnd, IDC_SEARCH_BAR), NULL);
-			_tree = new tree::AddonsTree(GetDlgItem(_hWnd, IDC_TREE), json);
-			_text = new MyRichEdit::RichEdit(GetDlgItem(_hWnd, IDC_TEXT));
-
-			ShowWindow(_hWnd, SW_SHOW);
-			return true;
-		}
-
 		void UpdateWnd::destroy() {
 			if (_hWnd)
 				DestroyWindow(_hWnd);
