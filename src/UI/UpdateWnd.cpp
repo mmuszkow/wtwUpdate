@@ -68,7 +68,7 @@ namespace wtwUpdate {
 			if (!_text || !_tree)
 				return;
 
-			_text->setHtml(utow(_tree->getDescription(id)).c_str());
+			_text->setHtml(stow(_tree->getDescription(id)).c_str());
 		}
 
 		void UpdateWnd::destroy() {

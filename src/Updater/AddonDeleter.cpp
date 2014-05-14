@@ -23,7 +23,7 @@ namespace wtwUpdate {
 				}
 			}
 
-			s.setInt64(utow(_addon.getId()).c_str(), 0);
+			s.setInt64(stow(_addon.getId()).c_str(), 0);
 			s.write();
 			commit();
 			return true;

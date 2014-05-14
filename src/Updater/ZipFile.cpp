@@ -6,7 +6,7 @@
 namespace wtwUpdate {
 	namespace updater {
 		ZipFile::ZipFile(const std::wstring& fn) {
-			_file = unzOpen(wtou(fn).c_str()); // TODO: unzOpen is utf8?
+			_file = unzOpen(wtos(fn).c_str()); // TODO: unzOpen is utf8?
 		}
 
 		ZipFile::~ZipFile() {

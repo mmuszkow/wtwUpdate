@@ -40,32 +40,34 @@
 
 #define MDL	L"UPDT"
 
-#include "cpp/Conv.h"
-
 extern WTWFUNCTIONS* fn;
 extern HINSTANCE hInst;
 extern HWND hMain;
 
-static std::wstring utow(const char* str) {
-	wchar_t* w = wtw::CConv::utow(str);
-	std::wstring ret(w);
-	wtw::CConv::release(w);
-	return ret;
+/** Converts the std::string with defined encoding into the UTF-16 std::wstring */
+static std::wstring stow(const std::string& str, UINT encoding = CP_UTF8) {
+	int len = MultiByteToWideChar(encoding, 0, str.c_str(), -1, NULL, 0);
+	if (len <= 0) return L"";
+
+	wchar_t* buff = new wchar_t[len + 1];
+	MultiByteToWideChar(encoding, 0, str.c_str(), -1, buff, len);
+	buff[len] = 0;
+	std::wstring res(buff);
+	delete[] buff;
+	return res;
 }
 
-static std::wstring utow(const std::string& str) {
-	return utow(str.c_str());
-}
+/** Converts the UTF-16 std::wstring into the std::string with chosen encoding */
+static std::string wtos(const std::wstring& str, UINT encoding = CP_UTF8) {
+	int len = WideCharToMultiByte(encoding, 0, str.c_str(), -1, NULL, 0, 0, 0);
+	if (len <= 0) return "";
 
-static std::string wtou(const wchar_t* str) {
-	char* s = wtw::CConv::wtou(str);
-	std::string ret(s);
-	wtw::CConv::release(s);
-	return ret;
-}
-
-static std::string wtou(const std::wstring& str) {
-	return wtou(str.c_str());
+	char* buff = new char[len + 1];
+	WideCharToMultiByte(encoding, 0, str.c_str(), -1, buff, len, 0, 0);
+	buff[len] = 0;
+	std::string res(buff);
+	delete[] buff;
+	return res;
 }
 
 static void notify(const wchar_t* fmt, ...) {

@@ -21,8 +21,8 @@ namespace wtwUpdate {
 			return true;
 		}
 
-		FilePath::FilePath(const char* utf8path) {
-			_path = utow(utf8path);
+		void FilePath::init(const char* utf8path) {
+			_path = stow(utf8path);
 
 			// replace variables
 			replace(_path, L"__PLUGINS32__", _plugins32Dir);
@@ -36,8 +36,6 @@ namespace wtwUpdate {
 
 			std::replace(_path.begin(), _path.end(), L'/', L'\\');
 		}
-
-		FilePath::FilePath(const json::File& file) : FilePath(file.getPath().c_str()) { }
 
 		bool FilePath::initDirPaths() {
 			wtwDirectoryInfo dirInfo;

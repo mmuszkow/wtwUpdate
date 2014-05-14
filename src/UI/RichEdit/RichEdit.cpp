@@ -4,6 +4,10 @@
 #include <GdiPlus.h>
 #include "FastStrBuff.hpp"
 
+#ifndef MY_RICHEDIT_NO_HTTP
+# include "Utils/Http.hpp"
+#endif
+
 namespace MyRichEdit {
 	HMODULE		RichEdit::_hRichEditLib = NULL;
 #ifndef MY_RICHEDIT_NO_OLE
@@ -66,10 +70,26 @@ namespace MyRichEdit {
 			return addText(L" [img] ");
 
 		std::wstring imgPath = tag.substr(srcStart+5, srcEnd-srcStart-5);
-		SendMessage(getHwnd(), EM_SETSEL, 0xFFFFFFF, 0xFFFFFFF);
+#ifndef MY_RICHEDIT_NO_HTTP
+		wtwUpdate::utils::BinaryFile tmp;
+		if (imgPath.find_first_of(L"http://") != std::wstring::npos 
+			|| imgPath.find_first_of(L"http://") != std::wstring::npos) {
+			wtwUpdate::utils::Http http;			
+			if (!http.download2file(imgPath, &tmp)) {
+				tmp.del();
+				return addText(L" [img] ");
+			}
 
+			imgPath = tmp.getPath();
+		}
+#endif
+
+		SendMessage(getHwnd(), EM_SETSEL, 0xFFFFFFF, 0xFFFFFFF);
 		Gdiplus::GpBitmap* image;
 		Gdiplus::DllExports::GdipCreateBitmapFromFile(imgPath.c_str(), &image);
+#ifndef MY_RICHEDIT_NO_HTTP
+		tmp.del();
+#endif
 		if(!image)
 			return addText(L" [img] ");
 		HBITMAP hImg;

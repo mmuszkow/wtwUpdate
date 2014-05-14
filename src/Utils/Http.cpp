@@ -148,8 +148,12 @@ namespace wtwUpdate {
 			if (!_hConnect && !connect(url.getHost(), url.getPort()))
 				return false;
 
+			DWORD flags = INTERNET_FLAG_DONT_CACHE;
+			if (url.isSsl())
+				flags |= INTERNET_FLAG_SECURE;
+
 			HINTERNET hRequest = HttpOpenRequest(
-				_hConnect, L"GET", url.getObj().c_str(), HTTP_VERSION, NULL, NULL, url.isSsl() ? INTERNET_FLAG_SECURE : 0, 0);
+				_hConnect, L"GET", url.getObj().c_str(), HTTP_VERSION, NULL, NULL, flags, 0);
 			if (!hRequest)
 				return false;
 

@@ -35,7 +35,7 @@ namespace wtwUpdate {
 		}
 
 		void Addon::updateInstallationState(const wtwUtils::Settings& s) {
-			if (s.getInt64(utow(_id).c_str(), 0) == 0) {
+			if (s.getInt64(stow(_id).c_str(), 0) == 0) {
 				_installationState = NOT_INSTALLED;
 				return;
 			}

@@ -22,13 +22,13 @@ namespace wtwUpdate {
 			size_t i, len = conflicts1.size();
 			failed += len;
 			for (i = 0; i < len; i++)
-				LOG_ERR(L"Addon %s conflicts with other addon", utow(conflicts1[i].getId()).c_str());
+				LOG_ERR(L"Addon %s conflicts with other addon", stow(conflicts1[i].getId()).c_str());
 
 			std::vector<json::Addon> conflicts2 = thread->_toInstall.removeConflicted();
 			i, len = conflicts2.size();
 			failed += len;
 			for (i = 0; i < len; i++)
-				LOG_ERR(L"Addon %s conflicts with other addon", utow(conflicts2[i].getId()).c_str());
+				LOG_ERR(L"Addon %s conflicts with other addon", stow(conflicts2[i].getId()).c_str());
 
 			// remove
 			wtwUtils::Settings s;
@@ -59,20 +59,18 @@ namespace wtwUpdate {
 
 				utils::BinaryFile f;
 				utils::Http http;
-				if (http.download2file(utow(addon.getZipUrl()).c_str(), &f)) {
+				if (http.download2file(stow(addon.getZipUrl()).c_str(), &f)) {
 					ZipFile zip(f.getPath());
 					if (!zip.isValid()) {
-						std::wstring addonId = utow(addon.getId());
-						LOG_ERR(L"Zip file for %s is invalid", addonId.c_str());
+						LOG_ERR(L"Zip file for %s is invalid", stow(addon.getId()).c_str());
 						failed++;
 					}
 					else if (!zip.unzip()) {
-						std::wstring addonId = utow(addon.getId());
-						LOG_ERR(L"Failed to install (unzip) %s", addonId.c_str());
+						LOG_ERR(L"Failed to install (unzip) %s", stow(addon.getId()).c_str());
 						failed++;
 					}
 					else {
-						s.setInt64(utow(addon.getId()).c_str(), addon.getTime());
+						s.setInt64(stow(addon.getId()).c_str(), addon.getTime());
 						s.write();
 						switch (addon.getState()) {
 						case json::Addon::NOT_INSTALLED:
@@ -85,7 +83,7 @@ namespace wtwUpdate {
 					}
 				}
 				else
-					LOG_ERR(L"Failed to download %s", addon.getZipUrl().c_str());
+					LOG_ERR(L"Failed to download %s", stow(addon.getZipUrl()).c_str());
 
 				f.del();
 

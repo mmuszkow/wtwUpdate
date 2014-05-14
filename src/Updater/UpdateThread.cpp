@@ -45,7 +45,7 @@ namespace wtwUpdate {
 				return NULL;
 			}
 
-			bds_decoder* decoder = bdf_decoder_create_with_cache_from(wtou(f.getPath()).c_str(), map);
+			bds_decoder* decoder = bdf_decoder_create_with_cache_from(wtos(f.getPath()).c_str(), map);
 			bds_node* node;
 			if (!bdf_read_doc(decoder, &node)) {
 				LOG_ERR(L"Failed to parse BSON file from %s", url.c_str());

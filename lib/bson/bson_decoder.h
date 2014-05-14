@@ -33,12 +33,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <stdbool.h> // needs C99
-
-#define bool	_Bool
-#define false	0
-#define true	1
-
+#include <stdbool.h> // needs C99
 #include <string.h>
 
 // naming convention
@@ -48,8 +43,6 @@
 // bds = struct
 // bde = enum
 // bdu = union
-
-
 
 #define bdf_malloc(s)   malloc(s)
 #define bdf_strdup(str) strdup(str)

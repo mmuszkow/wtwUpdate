@@ -60,7 +60,7 @@ namespace wtwUpdate {
 				}
 				tvis.item.iImage = tvis.item.iSelectedImage = state;
 				tvis.item.lParam = _uid;
-				std::wstring wTitle = utow(newOne->getTitle());
+				std::wstring wTitle = stow(newOne->getTitle());
 				tvis.item.pszText = const_cast<wchar_t*>(wTitle.c_str());
 				tvis.item.cchTextMax = wTitle.size();
 				HTREEITEM ret = TreeView_InsertItem(getHwnd(), &tvis);

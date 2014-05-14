@@ -17,11 +17,18 @@ namespace wtwUpdate {
 			static std::wstring _langDir;
 
 			static bool replace(std::wstring& str, const std::wstring& from, const std::wstring& to);
+
+			void init(const char* utf8path);
 		public:
 			static bool initDirPaths();
 
-			FilePath(const char* utf8path);			
-			FilePath(const json::File& file);
+			FilePath(const char* utf8path) {
+				init(utf8path);
+			}
+
+			FilePath(const json::File& file) {
+				init(file.getPath().c_str());
+			}
 
 			inline const std::wstring& getPath() const {
 				return _path;
