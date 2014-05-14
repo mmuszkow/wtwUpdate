@@ -4,7 +4,7 @@
 
 namespace wtwUpdate {
 	namespace ui {
-		UpdateWnd::UpdateWnd() : _hWnd(NULL), /*_searchBar(NULL),*/ _tree(NULL), _text(NULL) { }
+		UpdateWnd::UpdateWnd() : _hWnd(NULL), /*_searchBar(NULL),*/ _tree(NULL), _text(NULL), _minW(0), _minH(0) { }
 
 		UpdateWnd::~UpdateWnd()  {
 			destroy();
@@ -20,8 +20,13 @@ namespace wtwUpdate {
 
 		INT_PTR CALLBACK UpdateWnd::DlgProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam) {
 			switch (Msg) {
-			case WM_INITDIALOG:
+			case WM_INITDIALOG: {
+				RECT r;
+				GetWindowRect(hDlg, &r);
+				UpdateWnd::get()._minW = r.right - r.left;
+				UpdateWnd::get()._minH = r.bottom - r.top;
 				return TRUE;
+			}
 			case WM_CTLCOLORDLG:
 			case WM_CTLCOLORBTN:
 			case WM_CTLCOLOREDIT:
@@ -46,6 +51,14 @@ namespace wtwUpdate {
 			case WM_LBUTTONUP:
 				UpdateWnd::get()._tree->check();
 				return FALSE;
+			case WM_GETMINMAXINFO: {
+				MINMAXINFO* mmi = reinterpret_cast<MINMAXINFO*>(lParam);
+				mmi->ptMinTrackSize.x = UpdateWnd::get()._minW;
+				mmi->ptMinTrackSize.y = UpdateWnd::get()._minH;
+				return 0;
+			}
+			case WM_SIZE:
+				return UpdateWnd::get().resizeHandler(LOWORD(lParam), HIWORD(lParam));
 			// TODO: move this to AddonsTree
 			case WM_NOTIFY:
 				if (wParam == IDC_TREE) {
@@ -69,6 +82,30 @@ namespace wtwUpdate {
 				return;
 
 			_text->setHtml(stow(_tree->getDescription(id)).c_str());
+		}
+
+		BOOL UpdateWnd::resizeHandler(int w, int h) {
+			// control w and h
+			int cW, cH; 
+			RECT r;
+
+			// text
+			r = { 150, 0, 300, 200 };
+			MapDialogRect(_hWnd, &r);
+			cH = r.bottom - r.top;
+			MoveWindow(GetDlgItem(_hWnd, IDC_TEXT), r.left, r.top, w - r.left, cH, FALSE);
+
+			// buttons
+			r = { 235, 200, 300, 220 };
+			MapDialogRect(_hWnd, &r);
+			cW = r.right - r.left;
+			cH = r.bottom - r.top;
+			MoveWindow(GetDlgItem(_hWnd, IDCANCEL), w - cW * 2, h - cH, cW, cH, FALSE);
+			MoveWindow(GetDlgItem(_hWnd, IDOK), w - cW, h - cH, cW, cH, FALSE);
+
+			InvalidateRect(_hWnd, NULL, TRUE);
+
+			return 0;
 		}
 
 		void UpdateWnd::destroy() {

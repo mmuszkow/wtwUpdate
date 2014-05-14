@@ -18,10 +18,13 @@ namespace wtwUpdate {
 			static INT_PTR CALLBACK DlgProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 			void selectHandler(LPARAM id);
+			BOOL resizeHandler(int w, int h);
 
 			UpdateWnd();
 
 			bool init();
+
+			int _minW, _minH;
 		public:
 			~UpdateWnd();
 
