@@ -1,6 +1,7 @@
 #include "stdinc.h"
 #include "UpdateWnd.hpp"
 #include "Updater/InstallThread.hpp"
+#include "Utils/Serialization.hpp"
 
 namespace wtwUpdate {
 	namespace ui {
@@ -8,6 +9,33 @@ namespace wtwUpdate {
 
 		UpdateWnd::~UpdateWnd()  {
 			destroy();
+		}
+
+		DWORD UpdateWnd::download(PVOID arg) {
+			UpdateWnd& wnd = UpdateWnd::get();
+
+			/*wtw::CJson* json = downloadJson(L"http://wtw-addons.cba.pl/central.json");
+			UpdateWnd::get().open(hMain, hInst, json);
+			if (!json)
+			return false; */
+
+			bds_strings_map* map = bdf_strings_map_create(8192);
+			bds_node* bson = utils::downloadBson(L"http://wtw-addons.cba.pl/central.bson", map);
+			if (!bson) {
+				bdf_strings_map_destroy(map);
+				return 1;
+			}
+
+			wnd._tree = new tree::AddonsTree(GetDlgItem(wnd._hWnd, IDC_TREE), bson);
+			//wtw::CJson::decref(json);
+			bdf_node_destroy(bson, false);
+			bdf_strings_map_destroy(map);
+
+			//_searchBar = new SearchBar(GetDlgItem(hwnd, IDC_SEARCH_BAR), NULL);
+
+			wnd._text = new MyRichEdit::RichEdit(GetDlgItem(wnd._hWnd, IDC_TEXT));
+
+			return 0;
 		}
 
 		void UpdateWnd::freeControls() {

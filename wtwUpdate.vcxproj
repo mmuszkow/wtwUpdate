@@ -380,6 +380,7 @@
       <FileType>CppCode</FileType>
     </ClInclude>
     <ClCompile Include="src\Utils\Http.cpp" />
+    <ClCompile Include="src\Utils\Serialization.cpp" />
     <ClCompile Include="src\Utils\Settings.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdinc.h</PrecompiledHeaderFile>
@@ -419,6 +420,7 @@
     <ClInclude Include="src\Utils\Dir.hpp" />
     <ClInclude Include="src\Utils\Http.hpp" />
     <ClInclude Include="src\Utils\Mutex.hpp" />
+    <ClInclude Include="src\Utils\Serialization.hpp" />
     <ClInclude Include="src\Utils\Settings.hpp" />
   </ItemGroup>
   <ItemGroup>

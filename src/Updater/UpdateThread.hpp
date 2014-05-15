@@ -8,9 +8,7 @@
 namespace wtwUpdate {
 	namespace updater {
 		class UpdateThread : public UniqueThread {
-		public:
-			wtw::CJson* downloadJson(const std::wstring& url);
-			bds_node*   downloadBson(const std::wstring& url, bds_strings_map* map = NULL);
+			static WTW_PTR onNotificationClick(WTW_PARAM wPar, WTW_PARAM lPar, void* cData);
 		protected:
 			static DWORD WINAPI proc(LPVOID args);
 		public:

@@ -132,6 +132,9 @@
     <ClCompile Include="lib\bson\bson_decoder.c">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\Serialization.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\resource.h">
@@ -246,6 +249,9 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="lib\bson\bson_decoder.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Serialization.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>

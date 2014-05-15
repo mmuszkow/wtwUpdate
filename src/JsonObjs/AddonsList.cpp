@@ -10,6 +10,11 @@ namespace wtwUpdate {
 			recSection(json, std::string(), s);
 		}
 
+		AddonsList::AddonsList(bds_node* bson) {
+			wtwUtils::Settings s;
+			recSection(bson, std::string(), s);
+		}
+
 		void AddonsList::recAddon(wtw::CJson* json, const std::string& dir, const wtwUtils::Settings& s) {
 			if (!json)
 				return;
@@ -46,6 +51,47 @@ namespace wtwUpdate {
 				recAddon(json->find("addon"), newDir, s);
 			}
 		}	
+
+		void AddonsList::recAddon(bds_node* bson, const std::string& dir, const wtwUtils::Settings& s) {
+			switch (bdf_elem_type(bson)) {
+			case E_DOC: {
+				json::Addon addon(bson, dir);
+				addon.updateInstallationState(s);
+				push_back(addon);
+				break;
+			}
+			case E_ARRAY:
+				bson = bson->elem.data.node;
+				while (bson) {
+					recAddon(bson, dir, s);
+					bson = bson->next;
+				}
+				break;
+			}
+		}
+
+		void AddonsList::recSection(bds_node* bson, const std::string& dir, const wtwUtils::Settings& s) {
+			switch (bdf_elem_type(bson)) {
+			case E_DOC: {
+				char* newDir;
+				if (bdf_elem_str(bdf_elem_child(bson, "dir"), &newDir)) {
+					recSection(bdf_elem_child(bson, "section"), newDir, s);
+					recAddon(bdf_elem_child(bson, "addon"), newDir, s);
+				} else {
+					recSection(bdf_elem_child(bson, "section"), dir, s);
+					recAddon(bdf_elem_child(bson, "addon"), dir, s);
+				}
+				break;
+			}
+			case E_ARRAY:
+				bson = bson->elem.data.node;
+				while (bson) {
+					recSection(bdf_elem_child(bson, "section"), dir, s);
+					bson = bson->next;
+				}
+				break;
+			}
+		}
 
 		std::vector<json::Addon> AddonsList::removeConflicted() {
 			std::vector<json::Addon> ret;

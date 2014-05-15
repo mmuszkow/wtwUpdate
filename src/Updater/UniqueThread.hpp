@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Windows.h>
 #include "Utils/Mutex.hpp"
 
 namespace wtwUpdate {

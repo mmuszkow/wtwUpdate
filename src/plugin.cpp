@@ -40,25 +40,12 @@ WTWPLUGINFO* __stdcall queryPlugInfo(DWORD apiVersion, DWORD masterVersion) {
 }
 
 class UpdateWndMenuItem : public WtwMenuItem {
-	static WTW_PTR wtwMenuClickFunc(WTW_PARAM, WTW_PARAM, void* cData) {
-		/*wtw::CJson* json = UpdateThread::get().downloadJson(L"http://wtw-addons.cba.pl/central.json");
-		UpdateWnd::get().open(hMain, hInst, json);
-		if (json)
-			wtw::CJson::decref(json);*/
-
-		bds_strings_map* map = bdf_strings_map_create(8192);
-		bds_node* bson = UpdateThread::get().downloadBson(L"http://wtw-addons.cba.pl/central.bson");
-		if (bson) {
-			UpdateWnd::get().open<bds_node*>(hMain, hInst, bson);
-			bdf_node_destroy(bson, false);
-		}
-		bdf_strings_map_destroy(map);
-
+	static WTW_PTR wtwMenuClickFunc(WTW_PARAM wPar, WTW_PARAM lPar, void* cData) {
+		UpdateWnd::get().start();
 		return 0;
 	}
 public:
-	UpdateWndMenuItem() : WtwMenuItem(WTW_MENU_ID_MAIN_OPT, L"wtwUpdate/updateWnd", L"Aktualizuj", wtwMenuClickFunc) {
-	}
+	UpdateWndMenuItem() : WtwMenuItem(WTW_MENU_ID_MAIN_OPT, L"wtwUpdate/updateWnd", L"Aktualizuj", wtwMenuClickFunc) { }
 };
 
 UpdateWndMenuItem* menuItem;
@@ -72,10 +59,10 @@ int __stdcall pluginLoad(DWORD callReason, WTWFUNCTIONS* _fn) {
 	MyRichEdit::RichEdit::libInit();
 
 	
-	//UpdateThread& updateThread = UpdateThread::get();
-	//ThreadScheduler& scheduler = ThreadScheduler::get();
-	//scheduler.schedule(updateThread, 300000, true); // 5 min after start
-	//scheduler.schedule(updateThread, 86400000, false); // once every 24h
+	UpdateThread& updateThread = UpdateThread::get();
+	ThreadScheduler& scheduler = ThreadScheduler::get();
+	scheduler.schedule(updateThread, 3000 /*300000*/, true); // 5 min after start
+	scheduler.schedule(updateThread, 86400000, false); // once every 24h
 
 	fn->fnCall(WTW_GET_MAIN_HWND_EX, reinterpret_cast<WTW_PARAM>(&hMain), NULL);
 	menuItem = new UpdateWndMenuItem();

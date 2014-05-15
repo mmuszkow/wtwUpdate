@@ -10,7 +10,6 @@
 
 #include <WinSock2.h> // without this there was "windows.h" including error
 #include <plInterface.h>
-
 #include <string>
 #include <sstream>
 #include <map>
@@ -44,6 +43,8 @@ extern WTWFUNCTIONS* fn;
 extern HINSTANCE hInst;
 extern HWND hMain;
 
+#define LOG_ERR(fmt, ...) __LOG_F(fn, WTW_LOG_LEVEL_ERROR, MDL, fmt, __VA_ARGS__)
+
 /** Converts the std::string with defined encoding into the UTF-16 std::wstring */
 static std::wstring stow(const std::string& str, UINT encoding = CP_UTF8) {
 	int len = MultiByteToWideChar(encoding, 0, str.c_str(), -1, NULL, 0);
@@ -70,7 +71,7 @@ static std::string wtos(const std::wstring& str, UINT encoding = CP_UTF8) {
 	return res;
 }
 
-static void notify(const wchar_t* fmt, ...) {
+static void notifyEx(DWORD time, WTWFUNCTION callback, void* cbData, const wchar_t* fmt, ...) {
 	wtwTrayNotifyDef tray;
 
 	// format
@@ -86,10 +87,12 @@ static void notify(const wchar_t* fmt, ...) {
 	tray.textLower = msg;
 	tray.iconId = WTW_GRAPH_ID_UPDATE;
 	tray.flags = WTW_TN_FLAG_OVERRIDE_TIME;
-	tray.showTime = 3000;
+	tray.showTime = time;
 	tray.graphType = WTW_TN_GRAPH_TYPE_SKINID;
+	tray.callback = callback;
+	tray.cbData = cbData;
 	fn->fnCall(WTW_SHOW_STANDARD_NOTIFY, tray, NULL);
 	delete[] msg;
 }
 
-#define LOG_ERR(fmt, ...) __LOG_F(fn, WTW_LOG_LEVEL_ERROR, MDL, fmt, __VA_ARGS__)
+#define notify(fmt, ...) notifyEx(3000, NULL, NULL, fmt, __VA_ARGS__)
