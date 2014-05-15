@@ -85,23 +85,30 @@ namespace wtwUpdate {
 		}
 
 		BOOL UpdateWnd::resizeHandler(int w, int h) {
-			// control w and h
-			int cW, cH; 
-			RECT r;
+			RECT treeRect = { 0, 0, 150, 200 };
+			RECT textRect = { 150, 0, 300, 200 };
+			RECT buttonRect = { 235, 200, 300, 220 };
+			if (MapDialogRect(_hWnd, &treeRect) == FALSE
+				|| MapDialogRect(_hWnd, &textRect) == FALSE
+				|| MapDialogRect(_hWnd, &buttonRect) == FALSE)
+				return 1;
 
-			// text
-			r = { 150, 0, 300, 200 };
-			MapDialogRect(_hWnd, &r);
-			cH = r.bottom - r.top;
-			MoveWindow(GetDlgItem(_hWnd, IDC_TEXT), r.left, r.top, w - r.left, cH, FALSE);
-
-			// buttons
-			r = { 235, 200, 300, 220 };
-			MapDialogRect(_hWnd, &r);
-			cW = r.right - r.left;
-			cH = r.bottom - r.top;
-			MoveWindow(GetDlgItem(_hWnd, IDCANCEL), w - cW * 2, h - cH, cW, cH, FALSE);
-			MoveWindow(GetDlgItem(_hWnd, IDOK), w - cW, h - cH, cW, cH, FALSE);
+			MoveWindow(GetDlgItem(_hWnd, IDC_TREE),
+				treeRect.left, treeRect.top,
+				rectW(treeRect), h - rectH(buttonRect),
+				FALSE);
+			MoveWindow(GetDlgItem(_hWnd, IDC_TEXT), 
+				textRect.left, textRect.top, 
+				w - textRect.left, h - rectH(buttonRect),
+				FALSE);
+			MoveWindow(GetDlgItem(_hWnd, IDCANCEL), 
+				w - rectW(buttonRect) * 2, h - rectH(buttonRect),
+				rectW(buttonRect), rectH(buttonRect), 
+				FALSE);
+			MoveWindow(GetDlgItem(_hWnd, IDOK), 
+				w - rectW(buttonRect), h - rectH(buttonRect),
+				rectW(buttonRect), rectH(buttonRect), 
+				FALSE);
 
 			InvalidateRect(_hWnd, NULL, TRUE);
 

@@ -25,6 +25,14 @@ namespace wtwUpdate {
 			bool init();
 
 			int _minW, _minH;
+
+			static inline LONG rectW(RECT& r) {
+				return r.right - r.left;
+			}
+
+			static inline LONG rectH(RECT& r) {
+				return r.bottom - r.top;
+			}
 		public:
 			~UpdateWnd();
 
